@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rifas On-line · Criador</title>
+  
+  <!-- PWA Meta Tags -->
+  <meta name="application-name" content="Rifas On-line">
+  <meta name="theme-color" content="#021b0f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Rifas On-line">
+  <meta name="mobile-web-app-capable" content="yes">
+  
+  <!-- PWA Icons -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="manifest" href="manifest.json">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #021b0f;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      border-bottom: 4px solid orange;
+      padding: 15px 20px;
+      background: #021b0f;
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 32px;
+      font-weight: bold;
+      text-align: center;
+    }
+    .logo span { color: orange; }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 10px;
+      flex-wrap: nowrap;
+    }
+    nav a {
+      color: #ffd54d;
+      text-decoration: none;
+      font-size: 18px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.2s;
+      white-space: nowrap;
+    }
+    nav a:hover { color: #ffb300; text-decoration: underline; }
+
+    /* hero / cabeçalho interno */
+    .hero {
+      padding: 20px 20px 10px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .hero h1 {
+      font-size: 24px;
+      color: #00ff9c;
+      margin-bottom: 5px;
+      display: inline-block;
+      white-space: nowrap;
+    }
+    .hero .info-lotece {
+      font-size: 1rem;
+      color: #4ec0e9;
+      font-weight: 400;
+      margin-top: 5px;
+    }
+
+    /* grade de cards (rifas) */
+    .rifas-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 25px;
+      padding: 30px 20px 40px;
+      max-width: 1400px;
+      margin: 0 auto;
+      flex: 1 0 auto;
+    }
+
+    /* card da rifa */
+    .rifa-card {
+      background: #0a2f1f;
+      border-radius: 24px;
+      width: 340px;
+      box-shadow: 0 15px 25px rgba(0,0,0,0.7);
+      overflow: hidden;
+      border: 1px solid #2b5a3b;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.1s;
+      position: relative;
+    }
+    .rifa-card:hover { transform: scale(1.01); }
+
+    .card-id {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255, 165, 0, 0.9);
+      color: #021b0f;
+      font-weight: bold;
+      font-size: 14px;
+      padding: 5px 12px;
+      border-radius: 30px;
+      z-index: 10;
+      border: 2px solid #ffd966;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    .produto-imagem {
+      width: 100%;
+      height: 220px;
+      background: #1a3e2b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 2px solid orange;
+      overflow: hidden;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .produto-imagem img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #0d2f1a;
+      display: block;
+      transition: 0.3s;
+    }
+    .produto-imagem img.ampliada {
+      object-fit: contain;
+      background: rgba(0,0,0,0.9);
+    }
+    .sem-imagem {
+      font-size: 48px;
+      color: #4c7a5c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* modal de imagem ampliada */
+    .imagem-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.95);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .imagem-modal img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+      border: 3px solid orange;
+      border-radius: 20px;
+    }
+
+    .card-content {
+      padding: 18px 18px 12px;
+      flex: 1;
+    }
+    .produto-nome {
+      font-size: 24px;
+      font-weight: 800;
+      color: #fff3d1;
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+    .produto-sobre {
+      font-size: 14px;
+      color: #b9d6c2;
+      margin-bottom: 12px;
+      border-left: 3px solid orange;
+      padding-left: 10px;
+    }
+    .info-sorteio {
+      display: flex;
+      justify-content: space-between;
+      background: #0d391f;
+      padding: 8px 10px;
+      border-radius: 30px;
+      margin: 12px 0;
+      font-size: 14px;
+      border: 1px solid #3f6d4c;
+    }
+    .info-sorteio span { color: #ffd966; font-weight: 600; }
+    
+    .valor-ponto {
+      background: #0d391f;
+      padding: 8px 12px;
+      border-radius: 30px;
+      margin: 8px 0;
+      font-size: 15px;
+      border: 1px solid #ffaa33;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    .valor-ponto span {
+      color: #ffd966;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    
+    .pix-info {
+      background: #0d391f;
+      padding: 10px 12px;
+      border-radius: 30px;
+      margin: 10px 0 15px;
+      font-size: 13px;
+      border: 1px dashed #ffaa33;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .pix-chave {
+      color: #ffd966;
+      font-weight: 600;
+      font-family: monospace;
+      font-size: 14px;
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .copiar-btn {
+      background: #ffaa33;
+      border: none;
+      color: #0a2f1f;
+      font-weight: bold;
+      font-size: 12px;
+      padding: 5px 12px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .copiar-btn:hover { background: #ffc107; }
+
+    /* área das bolas */
+    .bolas-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin: 15px 0 5px;
+      max-height: 200px;
+      overflow-y: auto;
+      padding: 4px 2px;
+    }
+    .bola {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      background: white;
+      color: black;
+      box-shadow: 0 3px 6px black;
+      cursor: pointer;
+      transition: 0.1s;
+      line-height: 1.2;
+      padding: 4px 0;
+      border: 1px solid #aaa;
+    }
+    .bola span { /* nome do cliente */
+      font-size: 8px;
+      font-weight: normal;
+      color: #222;
+      max-width: 44px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .bola.disponivel { background: white; }
+    .bola.comprada { background: #ffd54d; } /* amarela */
+    .bola.ganhadora { background: #00ff66; } /* verde */
+
+    /* rodapé do card com dois botões */
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 18px 18px;
+      gap: 8px;
+    }
+    .btn-footer {
+      border: none;
+      font-weight: bold;
+      font-size: 13px;
+      padding: 10px 12px;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: 0.2s;
+      flex: 1;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .btn-finalizar {
+      background: #ff8c00;
+      color: #0a2b1a;
+      box-shadow: 0 4px 0 #b36200;
+      border: 1px solid #ffd966;
+    }
+    .btn-finalizar:hover {
+      background: #ffaa33;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 #b36200;
+    }
+    .btn-whatsapp {
+      background: #2e7d32;
+      color: white;
+      box-shadow: 0 4px 0 #1b5e20;
+      border: 1px solid #81c784;
+    }
+    .btn-whatsapp:hover {
+      background: #3c9141;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 #1b5e20;
+    }
+
+    /* legenda e footer - sempre no final */
+    footer {
+      border-top: 4px solid orange;
+      padding: 15px;
+      text-align: center;
+      background: #021b0f;
+      margin-top: auto;
+    }
+    .legenda {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 10px 0 15px;
+      flex-wrap: nowrap;
+    }
+    .legenda-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+    }
+    .bola-legenda {
+      width: 20px; height: 20px; border-radius: 50%;
+    }
+    .bola-verde { background: #00ff66; }
+    .bola-amarela { background: #ffd54d; }
+    .bola-branca { background: white; border: 1px solid #aaa; }
+
+    .footer-text {
+      margin: 10px 0;
+      color: white;
+      font-size: 14px;
+    }
+
+    /* overlay / modal moderno */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,20,5,0.95);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-card {
+      background: linear-gradient(145deg, #0f3a22, #0a2b19);
+      padding: 30px 25px;
+      border-radius: 40px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border: 2px solid #ffb347;
+      box-shadow: 0 25px 50px rgba(0,255,100,0.3);
+    }
+    .modal-card h2 {
+      color: #ffb347;
+      border-bottom: 2px solid #ff9900;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+      font-size: 28px;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+    .modal-card h3 {
+      color: #ffd966;
+      margin: 15px 0;
+      line-height: 1.6;
+    }
+    .modal-card p {
+      color: #e0e0e0;
+      margin: 15px 0;
+      line-height: 1.6;
+      font-size: 16px;
+    }
+    .modal-card ul {
+      color: #e0e0e0;
+      margin: 15px 0 15px 30px;
+      line-height: 1.8;
+    }
+    .modal-card li {
+      margin: 10px 0;
+    }
+    .modal-card label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: 600;
+      color: #ffd966;
+      letter-spacing: 0.5px;
+    }
+    .modal-card input, .modal-card select, .modal-card textarea {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 30px;
+      border: none;
+      background: #1d4c2c;
+      color: white;
+      font-size: 16px;
+      border: 2px solid #3c8d4f;
+      transition: 0.2s;
+      outline: none;
+    }
+    .modal-card input:focus, .modal-card select:focus, .modal-card textarea:focus {
+      border-color: #ffaa33;
+      box-shadow: 0 0 0 3px rgba(255,170,51,0.3);
+    }
+    .modal-card input::placeholder, .modal-card textarea::placeholder {
+      color: #9bc0a5;
+      font-style: italic;
+    }
+    .modal-card button {
+      background: linear-gradient(45deg, #ff8c00, #ffaa33);
+      border: none;
+      padding: 16px 30px;
+      border-radius: 50px;
+      font-weight: bold;
+      font-size: 18px;
+      margin: 25px 10px 0 0;
+      cursor: pointer;
+      color: #0a2b1a;
+      box-shadow: 0 8px 0 #b36200;
+      transition: 0.1s ease;
+      border: 1px solid #ffd966;
+    }
+    .modal-card button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 11px 0 #b36200;
+    }
+    .btn-sec {
+      background: #3a4f41 !important;
+      color: white !important;
+      box-shadow: 0 8px 0 #1e3323 !important;
+    }
+    .btn-termo {
+      background: #2e7d32 !important;
+      color: white !important;
+      box-shadow: 0 8px 0 #1b5e20 !important;
+    }
+    .file-upload {
+      background: #1d4c2c;
+      padding: 25px;
+      border-radius: 30px;
+      text-align: center;
+      border: 3px dashed #ffaa33;
+      cursor: pointer;
+      font-size: 1.1rem;
+      color: #ffd966;
+      transition: 0.2s;
+    }
+    .file-upload:hover {
+      background: #256f39;
+    }
+
+    /* prompts customizados (do código anterior) */
+    .swal-modal-moderno {
+      background: #0f3a22;
+      border-radius: 40px;
+      border: 3px solid #ff9900;
+      padding: 25px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 30px 60px #00000080;
+      text-align: center;
+    }
+    .swal-input-moderno {
+      background: #1e4a2d;
+      border: 2px solid #3fa35b;
+      border-radius: 60px;
+      padding: 16px 20px;
+      color: white;
+      font-size: 18px;
+      width: 100%;
+      margin: 15px 0;
+    }
+    .swal-input-moderno:focus {
+      border-color: #ffaa33;
+      box-shadow: 0 0 0 3px rgba(255,170,51,0.3);
+      outline: none;
+    }
+    .swal-button {
+      background: orange;
+      border: none;
+      border-radius: 60px;
+      padding: 12px 30px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 5px;
+      color: #0a2b1a;
+      box-shadow: 0 4px 0 #b36200;
+      transition: 0.1s ease;
+    }
+    .swal-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 #b36200;
+    }
+
+    /* alertas modernos (do código anterior) */
+    .alerta-moderno {
+      background: linear-gradient(145deg, #0f3a22, #0a2b19);
+      border-radius: 40px;
+      border: 3px solid #ff9900;
+      padding: 30px;
+      max-width: 450px;
+      margin: auto;
+      box-shadow: 0 30px 60px #00000080;
+      text-align: center;
+    }
+    .alerta-moderno h3 {
+      color: #ffb347;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .alerta-moderno p {
+      color: white;
+      font-size: 18px;
+      margin: 20px 0;
+      line-height: 1.6;
+    }
+    .alerta-moderno .alerta-icon {
+      font-size: 48px;
+      margin: 10px 0;
+    }
+    .alerta-moderno button {
+      background: linear-gradient(45deg, #ff8c00, #ffaa33);
+      border: none;
+      padding: 14px 40px;
+      border-radius: 50px;
+      font-weight: bold;
+      font-size: 18px;
+      margin-top: 20px;
+      cursor: pointer;
+      color: #0a2b1a;
+      box-shadow: 0 8px 0 #b36200;
+      transition: 0.1s ease;
+    }
+    .alerta-moderno button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 11px 0 #b36200;
+    }
+
+    .vencedor-linha {
+      background: #134b21;
+      padding: 15px;
+      border-radius: 20px;
+      margin: 15px 0;
+    }
+    
+    /* tabela com scroll horizontal */
+    .tabela-wrapper {
+      overflow-x: auto;
+      border-radius: 20px;
+      margin: 10px 0;
+    }
+    .tabela-clientes {
+      width: 100%;
+      border-collapse: collapse;
+      background: #1c4529;
+      border-radius: 20px;
+      min-width: 550px;
+    }
+    .tabela-clientes th, .tabela-clientes td {
+      padding: 8px 8px;
+      border-bottom: 1px solid #3f754a;
+      text-align: left;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .tabela-clientes th {
+      background: #0d391f;
+      color: #ffd966;
+    }
+    .tabela-clientes td {
+      color: white;
+    }
+    .telefone-vencedor {
+      color: #4ec0e9;
+      cursor: pointer;
+      text-decoration: underline;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+    .telefone-vencedor:hover {
+      color: #81d4fa;
+      transform: scale(1.05);
+    }
+    .btn-excluir-cliente {
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+      white-space: nowrap;
+      border: 1px solid #ff9999;
+    }
+    .btn-excluir-cliente:hover {
+      background: #c82333;
+      transform: scale(1.05);
+    }
+
+    /* PWA - Instalação */
+    .install-container {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 100;
+    }
+    .install-btn {
+      background: #2e7d32;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 12px 24px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      border: 2px solid #ffaa33;
+      transition: 0.2s;
+      display: none;
+    }
+    .install-btn:hover {
+      transform: scale(1.05);
+      background: #3c9141;
+    }
+  </style>
+</head>
+<body>
+  <!-- Botão de instalação PWA -->
+  <div class="install-container">
+    <button id="installButton" class="install-btn">📱 Instalar App</button>
+  </div>
+
+  <header>
+    <div class="logo">RIFAS <span>ON-LINE</span></div>
+    <nav>
+      <a href="https://lotece.com.br" target="_blank">Site Lotece</a>
+      <a id="linkMinhasRifas">Minhas Rifas</a>
+      <a onclick="abrirCriacaoRifa()">Criar Rifa</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Participe das Rifas On-Line</h1>
+    <div class="info-lotece">Sorteios pela Lotece -  1ª Dezena do 1º Prêmio do sorteio da Noite às 19:30 h</div>
+  </section>
+
+  <!-- cards das rifas serão inseridos aqui via JS -->
+  <div id="rifasContainer" class="rifas-container"></div>
+
+  <footer>
+    <div class="legenda">
+      <div class="legenda-item"><span class="bola-legenda bola-verde"></span> Verde: Ganhador</div>
+      <div class="legenda-item"><span class="bola-legenda bola-amarela"></span> Amarela: Comprada</div>
+      <div class="legenda-item"><span class="bola-legenda bola-branca"></span> Branca: Disponível</div>
+    </div>
+    <div class="footer-text">© Rifas On-line - Todos os direitos reservados. - Desenvolvido por Márcio Dom.</div>
+  </footer>
+
+  <script>
+    (function() {
+      // ---------- PWA: REGISTRO DE SERVICE WORKER ----------
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('service-worker.js').then(registration => {
+            console.log('ServiceWorker registrado com sucesso:', registration.scope);
+          }).catch(error => {
+            console.log('Falha ao registrar ServiceWorker:', error);
+          });
+        });
+      }
+
+      // ---------- PWA: BOTÃO DE INSTALAÇÃO ----------
+      let deferredPrompt;
+      const installButton = document.getElementById('installButton');
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installButton.style.display = 'block';
+      });
+
+      installButton.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`Resultado da instalação: ${outcome}`);
+        
+        deferredPrompt = null;
+        installButton.style.display = 'none';
+      });
+
+      window.addEventListener('appinstalled', () => {
+        console.log('App instalado com sucesso!');
+        installButton.style.display = 'none';
+      });
+
+      // ---------- BANCO DE DADOS LOCAL ----------
+      let RIFAS = [];         // array de rifas (cada rifa é um objeto)
+
+      // carregar do localStorage
+      try {
+        const saved = localStorage.getItem('rifas_onlines');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            RIFAS = parsed;
+          }
+        }
+      } catch (e) {}
+
+      function salvarDados() {
+        localStorage.setItem('rifas_onlines', JSON.stringify(RIFAS));
+        renderizarRifas();
+      }
+
+      // ---------- FUNÇÃO PARA ENCONTRAR O MENOR ID DISPONÍVEL ----------
+      function encontrarProximoIdDisponivel() {
+        if (RIFAS.length === 0) return 1;
+        
+        // Coleta todos os IDs existentes
+        const idsExistentes = RIFAS.map(r => r.id).sort((a, b) => a - b);
+        
+        // Procura o primeiro gap na sequência
+        let idEsperado = 1;
+        for (let id of idsExistentes) {
+          if (id > idEsperado) {
+            // Encontrou um gap, retorna o idEsperado
+            return idEsperado;
+          }
+          idEsperado = id + 1;
+        }
+        
+        // Se não encontrou gap, retorna o próximo número
+        return idEsperado;
+      }
+
+      // ---------- FUNÇÃO PARA FORMATAR ID COM 2 DÍGITOS ----------
+      function formatarId(id) {
+        return id.toString().padStart(2, '0');
+      }
+
+      // ---------- FUNÇÃO PARA EXCLUIR CLIENTE (LIBERAR BOLA) ----------
+      function excluirCliente(rifaId, numeroBola) {
+        const rifa = RIFAS.find(r => r.id === rifaId);
+        if (!rifa) return false;
+        
+        const bola = rifa.bolas.find(b => b.numero === numeroBola);
+        if (!bola) return false;
+        
+        // Só permite excluir se for comprada (não pode excluir ganhadora)
+        if (bola.status !== 'comprada') {
+          alertaModerno('Aviso', '❌', 'Apenas bolas compradas (amarelas) podem ser liberadas.');
+          return false;
+        }
+        
+        // Limpa os dados do cliente e volta para disponível
+        bola.status = 'disponivel';
+        bola.clienteNome = null;
+        bola.clienteTel = null;
+        
+        salvarDados();
+        return true;
+      }
+
+      // ---------- FUNÇÃO PARA ABRIR WHATSAPP DO VENCEDOR ----------
+      function abrirWhatsappVencedor(telefone) {
+        if (!telefone) return;
+        
+        // Remove caracteres não numéricos e adiciona +55
+        let tel = telefone.replace(/\D/g, '');
+        if (tel.length >= 10 && tel.length <= 11) {
+          tel = '55' + tel;
+        } else {
+          tel = '55' + tel;
+        }
+        window.open(`https://wa.me/${tel}`, '_blank');
+      }
+
+      // ---------- FUNÇÃO PARA AMPLIAR IMAGEM ----------
+      function ampliarImagem(src) {
+        if (!src) return;
+        
+        const modal = document.createElement('div');
+        modal.className = 'imagem-modal';
+        modal.onclick = () => document.body.removeChild(modal);
+        
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = 'Imagem ampliada';
+        
+        modal.appendChild(img);
+        document.body.appendChild(modal);
+      }
+
+      // ---------- ALERTA MODERNO (DO CÓDIGO ANTERIOR) ----------
+      function alertaModerno(titulo, icone, mensagem) {
+        return new Promise((resolve) => {
+          const overlay = document.createElement('div');
+          overlay.className = 'modal-overlay';
+          overlay.innerHTML = `
+            <div class="alerta-moderno">
+              <div class="alerta-icon">${icone}</div>
+              <h3>${titulo}</h3>
+              <p>${mensagem}</p>
+              <button id="btnOkAlerta">OK</button>
+            </div>
+          `;
+          document.body.appendChild(overlay);
+
+          overlay.querySelector('#btnOkAlerta').addEventListener('click', () => {
+            document.body.removeChild(overlay);
+            resolve();
+          });
+        });
+      }
+
+      // ---------- PROMPT MODERNO (DO CÓDIGO ANTERIOR) ----------
+      function promptModerno(titulo, placeholder, isPassword = false) {
+        return new Promise((resolve) => {
+          const overlay = document.createElement('div');
+          overlay.className = 'modal-overlay';
+          overlay.innerHTML = `
+            <div class="swal-modal-moderno">
+              <h3 style="color:orange; margin-bottom:20px;">${titulo}</h3>
+              <input type="${isPassword ? 'password' : 'text'}" id="promptInput" class="swal-input-moderno" placeholder="${placeholder}" autofocus>
+              <div style="display:flex; gap:15px; justify-content:center; margin-top:25px;">
+                <button class="swal-button" id="confirmBtn">Confirmar</button>
+                <button class="swal-button btn-sec" id="cancelBtn">Cancelar</button>
+              </div>
+            </div>
+          `;
+          document.body.appendChild(overlay);
+
+          const input = overlay.querySelector('#promptInput');
+          overlay.querySelector('#confirmBtn').addEventListener('click', () => {
+            document.body.removeChild(overlay);
+            resolve(input.value);
+          });
+          overlay.querySelector('#cancelBtn').addEventListener('click', () => {
+            document.body.removeChild(overlay);
+            resolve(null);
+          });
+          input.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+              document.body.removeChild(overlay);
+              resolve(input.value);
+            }
+          });
+        });
+      }
+
+      // ---------- TERMO DE USO ----------
+      function mostrarTermoUso() {
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        overlay.innerHTML = `
+          <div class="modal-card" style="max-width: 700px;">
+            <h2>📋 Termo de Uso da Plataforma</h2>
+            <p style="color: #ffd966; font-size: 18px; margin-bottom: 20px;">Esta Aplicação é livre e fica sob a responsabilidade do usuário o uso desta plataforma.</p>
+            
+            <div style="background: #0d391f; padding: 20px; border-radius: 30px; margin: 20px 0;">
+              <p style="color: white; margin: 10px 0;"><span style="color: #ffaa33;">⚠️</span> <strong style="color: #ffd966;">Ao criar uma Rifa:</strong> opte por cadastrar uma chave Pix aleatória gerada no seu banco ou e-mail. Não é aconselhável cadastrar chave Pix com número de telefone ou CPF, pois a chave é exibida na Rifa para os usuários compradores copiarem e efetuarem os pagamentos.</p>
+              
+              <p style="color: white; margin: 15px 0;"><span style="color: #4ec0e9;">🎲</span> <strong style="color: #ffd966;">Os Sorteios</strong> deverão ser baseados nos sorteios da Loteria Estadual do Ceará (Lotece), para evitar possíveis fraudes em sorteios.</p>
+              
+              <p style="color: white; margin: 15px 0;"><span style="color: #4ec0e9;">📱</span> <strong style="color: #ffd966;">Cadastre corretamente</strong> seus dados no sistema: número de contato e e-mail, pois os mesmos serão usados para contato em eventual pagamento ou premiação.</p>
+            </div>
+            
+            <p style="color: #00ff9c; font-size: 20px; text-align: center; margin: 20px 0;">Divirta-se! 🎉</p>
+            
+            <div style="display: flex; justify-content: center;">
+              <button id="btnAceitarTermo" class="btn-termo">Entendi e Aceito</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(overlay);
+
+        overlay.querySelector('#btnAceitarTermo').addEventListener('click', () => {
+          document.body.removeChild(overlay);
+          localStorage.setItem('termo_aceito', 'true');
+        });
+      }
+
+      // ---------- UTIL ----------
+      function gerarNumeros(qtd) {
+        const nums = [];
+        for (let i = 0; i < qtd; i++) {
+          nums.push(i.toString().padStart(2, '0')); // 00, 01...
+        }
+        return nums;
+      }
+
+      // formatar data brasileira
+      function formatarDataBR(dataISO) {
+        if (!dataISO) return 'não definida';
+        const [ano, mes, dia] = dataISO.split('-');
+        return `${dia}/${mes}/${ano}`;
+      }
+
+      // formatar valor em reais
+      function formatarValor(valor) {
+        if (!valor) return 'Valor não definido';
+        return `R$ ${parseFloat(valor).toFixed(2)}`;
+      }
+
+      // ---------- RENDERIZAR CARDS ----------
+      function renderizarRifas() {
+        const container = document.getElementById('rifasContainer');
+        container.innerHTML = '';
+        if (RIFAS.length === 0) {
+          container.innerHTML = '<p style="color:#ccc; margin:50px;">Nenhuma rifa criada ainda. Clique em "Criar Rifa" para começar.</p>';
+          return;
+        }
+
+        RIFAS.forEach(rifa => {
+          const card = document.createElement('div');
+          card.className = 'rifa-card';
+          card.dataset.id = rifa.id;
+
+          // ID da rifa formatado com 2 dígitos
+          const idDiv = document.createElement('div');
+          idDiv.className = 'card-id';
+          idDiv.textContent = `ID: ${formatarId(rifa.id)}`;
+          card.appendChild(idDiv);
+
+          // imagem com clique para ampliar
+          const imgDiv = document.createElement('div');
+          imgDiv.className = 'produto-imagem';
+          if (rifa.imagemData) {
+            const img = document.createElement('img');
+            img.src = rifa.imagemData;
+            img.alt = 'produto';
+            imgDiv.appendChild(img);
+            imgDiv.onclick = () => ampliarImagem(rifa.imagemData);
+          } else {
+            imgDiv.classList.add('sem-imagem');
+            imgDiv.textContent = '📷';
+          }
+
+          // corpo
+          const content = document.createElement('div');
+          content.className = 'card-content';
+          
+          // informações do card
+          const dataFormatada = formatarDataBR(rifa.dataSorteio);
+          const valorFormatado = formatarValor(rifa.valorPonto);
+          
+          content.innerHTML = `
+            <div class="produto-nome">${escapeHTML(rifa.nomeProduto)}</div>
+            <div class="produto-sobre">${escapeHTML(rifa.sobreProduto) || '—'}</div>
+            <div class="valor-ponto">
+              <span>💰</span> Valor do ponto: <span>${valorFormatado}</span>
+            </div>
+            <div class="info-sorteio">
+              <span>📅 ${dataFormatada}</span>
+              <span>🔢 ${rifa.bolas.length} bolas</span>
+            </div>
+          `;
+
+          // adicionar chave PIX se existir
+          if (rifa.chavePix) {
+            const pixDiv = document.createElement('div');
+            pixDiv.className = 'pix-info';
+            pixDiv.innerHTML = `
+              <span class="pix-chave" title="${escapeHTML(rifa.chavePix)}">PIX: ${escapeHTML(rifa.chavePix)}</span>
+              <button class="copiar-btn" onclick="copiarPix('${escapeHTML(rifa.chavePix)}')">Copiar</button>
+            `;
+            content.appendChild(pixDiv);
+          }
+
+          // bolas
+          const bolasWrap = document.createElement('div');
+          bolasWrap.className = 'bolas-grid';
+          rifa.bolas.forEach((bola, idx) => {
+            const bolaEl = document.createElement('div');
+            bolaEl.className = `bola ${bola.status}`;
+            bolaEl.textContent = bola.numero;
+            const nomeSpan = document.createElement('span');
+            nomeSpan.textContent = bola.clienteNome ? bola.clienteNome.split(' ')[0] : '';
+            bolaEl.appendChild(nomeSpan);
+            bolaEl.onclick = (e) => {
+              e.stopPropagation();
+              if (bola.status === 'disponivel') {
+                comprarBola(rifa.id, idx);
+              } else {
+                alertaModerno('Bola ocupada', '⚠️', `Bola ${bola.numero} já está ${bola.status === 'comprada' ? 'comprada' : 'ganhadora'}.`);
+              }
+            };
+            bolasWrap.appendChild(bolaEl);
+          });
+
+          content.appendChild(bolasWrap);
+
+          // footer do card com dois botões
+          const footerDiv = document.createElement('div');
+          footerDiv.className = 'card-footer';
+          
+          // Botão Finalizar Sorteio (laranja)
+          const btnFinal = document.createElement('button');
+          btnFinal.className = 'btn-footer btn-finalizar';
+          btnFinal.textContent = 'Finalizar Sorteio';
+          btnFinal.onclick = (e) => {
+            e.stopPropagation();
+            finalizarSorteio(rifa.id);
+          };
+          
+          // Botão Enviar Comprovante (verde) - Código do país +55 adicionado automaticamente
+          const btnWhats = document.createElement('button');
+          btnWhats.className = 'btn-footer btn-whatsapp';
+          btnWhats.textContent = 'Enviar Comprovante';
+          btnWhats.onclick = (e) => {
+            e.stopPropagation();
+            if (rifa.telefoneCriador) {
+              // Remove caracteres não numéricos e adiciona +55
+              let telefone = rifa.telefoneCriador.replace(/\D/g, '');
+              // Garante que o telefone tenha DDD (8 ou 9 dígitos após DDD)
+              if (telefone.length >= 10 && telefone.length <= 11) {
+                telefone = '55' + telefone;
+              } else {
+                telefone = '55' + telefone; // Adiciona 55 mesmo se tiver formatação estranha
+              }
+              window.open(`https://wa.me/${telefone}`, '_blank');
+            } else {
+              alertaModerno('Aviso', '📱', 'Criador não cadastrou número para contato.');
+            }
+          };
+          
+          footerDiv.appendChild(btnFinal);
+          footerDiv.appendChild(btnWhats);
+
+          card.appendChild(imgDiv);
+          card.appendChild(content);
+          card.appendChild(footerDiv);
+          container.appendChild(card);
+        });
+      }
+
+      // função global para copiar PIX
+      window.copiarPix = function(chave) {
+        navigator.clipboard.writeText(chave).then(() => {
+          alertaModerno('Sucesso', '✅', 'Chave PIX copiada!');
+        }).catch(() => {
+          alertaModerno('Erro', '❌', 'Erro ao copiar chave PIX.');
+        });
+      };
+
+      // escape simples
+      function escapeHTML(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>"]/g, function(m) {
+          if (m === '&') return '&amp;';
+          if (m === '<') return '&lt;';
+          if (m === '>') return '&gt;';
+          if (m === '"') return '&quot;';
+          return m;
+        });
+      }
+
+      // ---------- COMPRAR BOLA (cliente) ----------
+      async function comprarBola(rifaId, indexBola) {
+        const rifa = RIFAS.find(r => r.id === rifaId);
+        if (!rifa) return;
+        const bola = rifa.bolas[indexBola];
+        if (bola.status !== 'disponivel') return;
+
+        const nome = await promptModerno('Digite seu nome completo', 'Ex: João Silva');
+        if (!nome) return;
+        const telefone = await promptModerno('Telefone com DDD', '(11) 99999-9999');
+        if (!telefone) return;
+
+        bola.status = 'comprada';
+        bola.clienteNome = nome;
+        bola.clienteTel = telefone;
+        salvarDados();
+        
+        alertaModerno('Bola reservada', '✅', `Bola ${bola.numero} reservada com sucesso!`);
+      }
+
+      // ---------- FINALIZAR SORTEIO (somente criador com senha) ----------
+      async function finalizarSorteio(rifaId) {
+        const rifa = RIFAS.find(r => r.id === rifaId);
+        if (!rifa) return;
+        const senha = await promptModerno('DIGITE A SENHA DE PROTEÇÃO', 'senha', true);
+        if (senha !== rifa.senha) {
+          alertaModerno('Erro', '❌', 'Senha incorreta!');
+          return;
+        }
+        RIFAS = RIFAS.filter(r => r.id !== rifaId);
+        salvarDados();
+        alertaModerno('Rifa finalizada', '🗑️', 'Rifa removida com sucesso!');
+      }
+
+      // ---------- MODAL CRIAÇÃO DE RIFA ----------
+      window.abrirCriacaoRifa = async function() {
+        const email = await promptModerno('🔐 Autenticação (e-mail)', 'seu@email.com');
+        if (!email || !email.includes('@')) {
+          alertaModerno('E-mail inválido', '❌', 'Por favor, digite um e-mail válido.');
+          return;
+        }
+
+        // overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        overlay.id = 'modalCriarRifa';
+
+        const modal = document.createElement('div');
+        modal.className = 'modal-card';
+        
+        // data atual no formato yyyy-mm-dd
+        const hoje = new Date();
+        const ano = hoje.getFullYear();
+        const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+        const dia = String(hoje.getDate()).padStart(2, '0');
+        const dataAtual = `${ano}-${mes}-${dia}`;
+
+        modal.innerHTML = `
+          <h2>✚ Criar nova rifa</h2>
+          <label>📸 Imagem do produto</label>
+          <div class="file-upload" id="fileUploadTrigger">Clique para selecionar imagem ou GIF</div>
+          <input type="file" id="fileInput" accept="image/*" style="display:none;">
+
+          <label>🏷️ Nome do produto</label>
+          <input type="text" id="nomeProduto" placeholder="ex: Smartphone X">
+
+          <label>📄 Sobre o produto</label>
+          <textarea id="sobreProduto" rows="2" placeholder="Descreva o produto..."></textarea>
+
+          <label>🔢 Quantidade de bolas (00 até ...)</label>
+          <select id="qtdBolas">
+            <option value="10">10 bolas (00-09)</option>
+            <option value="20">20 bolas (00-19)</option>
+            <option value="30">30 bolas (00-29)</option>
+            <option value="40">40 bolas (00-39)</option>
+            <option value="50" selected>50 bolas (00-49)</option>
+            <option value="100">100 bolas (00-99)</option>
+          </select>
+
+          <label>💰 Valor do ponto (R$)</label>
+          <input type="number" id="valorPonto" step="0.01" min="0" placeholder="ex: 5.00">
+
+          <label>🔐 Senha para finalizar rifa</label>
+          <input type="password" id="senhaRifa" placeholder="crie uma senha">
+
+          <label>📱 Seu número com DDD (WhatsApp)</label>
+          <input type="text" id="telefoneCriador" placeholder="ex: 11999999999">
+
+          <label>💰 Chave PIX (para pagamento)</label>
+          <input type="text" id="chavePix" placeholder="ex: 11999999999 ou email@exemplo.com">
+
+          <label>📅 Data do sorteio</label>
+          <input type="date" id="dataSorteio" value="${dataAtual}">
+
+          <div style="display:flex; gap:15px; margin-top:25px;">
+            <button id="gerarRifaBtn">✅ Gerar Rifa</button>
+            <button class="btn-sec" id="cancelarBtn">Cancelar</button>
+          </div>
+        `;
+
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        // upload de imagem
+        const fileTrigger = modal.querySelector('#fileUploadTrigger');
+        const fileInput = modal.querySelector('#fileInput');
+        let imagemBase64 = null;
+
+        fileTrigger.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+              imagemBase64 = ev.target.result;
+              fileTrigger.textContent = '✅ Imagem carregada!';
+              fileTrigger.style.background = '#3d9b4d';
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+
+        // gerar rifa
+        modal.querySelector('#gerarRifaBtn').addEventListener('click', () => {
+          const nome = document.getElementById('nomeProduto').value.trim() || 'Sem nome';
+          const sobre = document.getElementById('sobreProduto').value.trim() || '—';
+          const qtd = parseInt(document.getElementById('qtdBolas').value, 10);
+          const valorPonto = document.getElementById('valorPonto').value;
+          const senha = document.getElementById('senhaRifa').value;
+          if (!senha) { 
+            alertaModerno('Aviso', '🔐', 'Defina uma senha para proteger a rifa.'); 
+            return; 
+          }
+          const telefoneCriador = document.getElementById('telefoneCriador').value.trim();
+          const chavePix = document.getElementById('chavePix').value.trim();
+          const dataSorteio = document.getElementById('dataSorteio').value || dataAtual;
+
+          const bolas = gerarNumeros(qtd).map(num => ({
+            numero: num,
+            status: 'disponivel',
+            clienteNome: null,
+            clienteTel: null
+          }));
+
+          // Encontra o próximo ID disponível (menor número livre)
+          const novoId = encontrarProximoIdDisponivel();
+
+          const novaRifa = {
+            id: novoId,
+            nomeProduto: nome,
+            sobreProduto: sobre,
+            imagemData: imagemBase64,
+            bolas: bolas,
+            valorPonto: valorPonto,
+            senha: senha,
+            telefoneCriador: telefoneCriador,
+            chavePix: chavePix,
+            dataSorteio: dataSorteio,
+            criadorEmail: email
+          };
+
+          RIFAS.push(novaRifa);
+          salvarDados();
+
+          // fechar modal
+          document.body.removeChild(overlay);
+          
+          alertaModerno('Rifa criada!', '🎉', 'Sua rifa foi criada com sucesso!');
+        });
+
+        modal.querySelector('#cancelarBtn').addEventListener('click', () => {
+          document.body.removeChild(overlay);
+        });
+      };
+
+      // ---------- LINK MINHAS RIFAS (autenticação por senha da rifa) ----------
+      document.getElementById('linkMinhasRifas').addEventListener('click', async () => {
+        // Primeiro solicita o ID da rifa
+        const idRifa = await promptModerno('Digite o ID da rifa (está no card)', 'ex: 01');
+        if (!idRifa) return;
+        
+        // Converte para número (remove zeros à esquerda)
+        const idNumerico = parseInt(idRifa, 10);
+        
+        const rifa = RIFAS.find(r => r.id === idNumerico);
+        if (!rifa) {
+          alertaModerno('Erro', '❌', 'Rifa não encontrada!');
+          return;
+        }
+
+        // Solicita a senha da rifa
+        const senhaRifa = await promptModerno('Digite a senha da rifa', 'senha', true);
+        if (senhaRifa !== rifa.senha) {
+          alertaModerno('Erro', '❌', 'Senha incorreta!');
+          return;
+        }
+
+        // Mostra apenas as informações da rifa específica
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        const modal = document.createElement('div');
+        modal.className = 'modal-card';
+        modal.style.maxWidth = '800px';
+        modal.innerHTML = '<h2>📋 Dados da Rifa</h2><div id="conteudoMinhasRifas"></div><button class="btn-sec" id="fecharMinhasRifas">Fechar</button>';
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        const conteudo = modal.querySelector('#conteudoMinhasRifas');
+        
+        const divRifa = document.createElement('div');
+        divRifa.style.background = '#1b4d2b';
+        divRifa.style.borderRadius = '20px';
+        divRifa.style.padding = '15px';
+        divRifa.style.marginBottom = '20px';
+        divRifa.innerHTML = `<h3 style="color:orange;">${escapeHTML(rifa.nomeProduto)} (ID: ${formatarId(rifa.id)})</h3>`;
+
+        const compradas = rifa.bolas.filter(b => b.status !== 'disponivel');
+        if (compradas.length === 0) {
+          divRifa.innerHTML += '<p>Nenhuma bola comprada ainda.</p>';
+        } else {
+          // Adiciona wrapper com scroll horizontal
+          const wrapper = document.createElement('div');
+          wrapper.className = 'tabela-wrapper';
+          
+          const tabela = document.createElement('table');
+          tabela.className = 'tabela-clientes';
+          tabela.innerHTML = '<tr><th>Nº</th><th>Cliente</th><th>Telefone</th><th>Status</th><th>Ação</th></tr>';
+          compradas.forEach(b => {
+            const row = tabela.insertRow();
+            const statusTexto = b.status === 'ganhadora' ? '🏆 Vencedor' : 'Comprada';
+            
+            // Coluna número
+            const cellNum = row.insertCell();
+            cellNum.textContent = b.numero;
+            
+            // Coluna cliente
+            const cellCliente = row.insertCell();
+            cellCliente.textContent = b.clienteNome || '-';
+            
+            // Coluna telefone (clicável se for vencedor)
+            const cellTel = row.insertCell();
+            if (b.status === 'ganhadora' && b.clienteTel) {
+              const telSpan = document.createElement('span');
+              telSpan.className = 'telefone-vencedor';
+              telSpan.textContent = b.clienteTel;
+              telSpan.onclick = () => abrirWhatsappVencedor(b.clienteTel);
+              cellTel.appendChild(telSpan);
+            } else {
+              cellTel.textContent = b.clienteTel || '-';
+            }
+            
+            // Coluna status
+            const cellStatus = row.insertCell();
+            cellStatus.textContent = statusTexto;
+            
+            // Coluna ação
+            const cellAcao = row.insertCell();
+            if (b.status === 'comprada') {
+              const btnExcluir = document.createElement('button');
+              btnExcluir.className = 'btn-excluir-cliente';
+              btnExcluir.textContent = '❌ Liberar';
+              btnExcluir.onclick = (e) => {
+                e.stopPropagation();
+                if (confirm(`Tem certeza que deseja liberar a bola ${b.numero}? O cliente será removido.`)) {
+                  if (excluirCliente(rifa.id, b.numero)) {
+                    document.body.removeChild(overlay);
+                    renderizarRifas();
+                  }
+                }
+              };
+              cellAcao.appendChild(btnExcluir);
+            } else {
+              cellAcao.textContent = '-';
+            }
+          });
+          
+          wrapper.appendChild(tabela);
+          divRifa.appendChild(wrapper);
+        }
+
+        const divVenc = document.createElement('div');
+        divVenc.className = 'vencedor-linha';
+        divVenc.innerHTML = '<label>Definir bola vencedora (ex: 07): </label><input type="text" id="numVenc_'+rifa.id+'" placeholder="00" size="3"> <button id="btnVenc_'+rifa.id+'">Salvar vencedor</button>';
+        divRifa.appendChild(divVenc);
+
+        conteudo.appendChild(divRifa);
+
+        document.getElementById('btnVenc_'+rifa.id).addEventListener('click', () => {
+          const input = document.getElementById('numVenc_'+rifa.id);
+          const num = input.value.trim().padStart(2,'0');
+          const bola = rifa.bolas.find(b => b.numero === num);
+          if (!bola) { 
+            alertaModerno('Erro', '❌', 'Número não existe'); 
+            return; 
+          }
+          if (bola.status === 'disponivel') {
+            alertaModerno('Aviso', '⚠️', 'Esta bola ainda não foi comprada!');
+            return;
+          }
+          rifa.bolas.forEach(b => { if (b.status === 'ganhadora') b.status = 'comprada'; });
+          bola.status = 'ganhadora';
+          salvarDados();
+          document.body.removeChild(overlay);
+          renderizarRifas();
+          alertaModerno('Vencedor definido', '🏆', `Bola ${num} agora é a vencedora!`);
+        });
+
+        modal.querySelector('#fecharMinhasRifas').addEventListener('click', () => document.body.removeChild(overlay));
+      });
+
+      // ---------- INICIALIZAÇÃO: MOSTRAR TERMO DE USO ----------
+      // Verifica se já aceitou o termo
+      const termoAceito = localStorage.getItem('termo_aceito');
+      if (!termoAceito) {
+        // Pequeno delay para garantir que a página carregou
+        setTimeout(mostrarTermoUso, 500);
+      }
+
+      // inicializar render
+      renderizarRifas();
+    })();
+  </script>
+</body>
+</html>
