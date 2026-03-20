@@ -407,6 +407,7 @@
       overflow-y: auto;
       border: 2px solid #ffb347;
       box-shadow: 0 25px 50px rgba(0,255,100,0.3);
+      position: relative;
     }
     .modal-card h2 {
       color: #ffb347;
@@ -465,30 +466,30 @@
     .modal-card button {
       background: linear-gradient(45deg, #ff8c00, #ffaa33);
       border: none;
-      padding: 16px 30px;
-      border-radius: 50px;
+      padding: 12px 20px;
+      border-radius: 40px;
       font-weight: bold;
-      font-size: 18px;
-      margin: 25px 10px 0 0;
+      font-size: 14px;
+      margin: 15px 5px 0 0;
       cursor: pointer;
       color: #0a2b1a;
-      box-shadow: 0 8px 0 #b36200;
+      box-shadow: 0 4px 0 #b36200;
       transition: 0.1s ease;
       border: 1px solid #ffd966;
     }
     .modal-card button:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 11px 0 #b36200;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 #b36200;
     }
     .btn-sec {
       background: #3a4f41 !important;
       color: white !important;
-      box-shadow: 0 8px 0 #1e3323 !important;
+      box-shadow: 0 4px 0 #1e3323 !important;
     }
     .btn-termo {
       background: #2e7d32 !important;
       color: white !important;
-      box-shadow: 0 8px 0 #1b5e20 !important;
+      box-shadow: 0 4px 0 #1b5e20 !important;
     }
     .file-upload {
       background: #1d4c2c;
@@ -503,6 +504,26 @@
     }
     .file-upload:hover {
       background: #256f39;
+    }
+    
+    .crown-icon {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      font-size: 28px;
+      cursor: pointer;
+      background: rgba(255, 165, 0, 0.3);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s;
+    }
+    .crown-icon:hover {
+      background: rgba(255, 165, 0, 0.6);
+      transform: scale(1.1);
     }
 
     /* prompts customizados (do código anterior) */
@@ -578,19 +599,19 @@
     .alerta-moderno button {
       background: linear-gradient(45deg, #ff8c00, #ffaa33);
       border: none;
-      padding: 14px 40px;
+      padding: 12px 30px;
       border-radius: 50px;
       font-weight: bold;
-      font-size: 18px;
+      font-size: 16px;
       margin-top: 20px;
       cursor: pointer;
       color: #0a2b1a;
-      box-shadow: 0 8px 0 #b36200;
+      box-shadow: 0 4px 0 #b36200;
       transition: 0.1s ease;
     }
     .alerta-moderno button:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 11px 0 #b36200;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 #b36200;
     }
 
     .vencedor-linha {
@@ -598,6 +619,44 @@
       padding: 15px;
       border-radius: 20px;
       margin: 15px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .vencedor-linha label {
+      align-self: flex-start;
+    }
+    .vencedor-linha div {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      width: 100%;
+    }
+    .vencedor-linha input {
+      width: 80px;
+      text-align: center;
+      padding: 8px;
+      border-radius: 30px;
+      border: 2px solid #3c8d4f;
+      background: #1d4c2c;
+      color: white;
+    }
+    .vencedor-linha button {
+      background: linear-gradient(45deg, #ff8c00, #ffaa33);
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      font-weight: bold;
+      font-size: 13px;
+      cursor: pointer;
+      color: #0a2b1a;
+      box-shadow: 0 4px 0 #b36200;
+      transition: 0.1s ease;
+    }
+    .vencedor-linha button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 #b36200;
     }
     
     /* tabela com scroll horizontal */
@@ -611,7 +670,7 @@
       border-collapse: collapse;
       background: #1c4529;
       border-radius: 20px;
-      min-width: 550px;
+      min-width: 600px;
     }
     .tabela-clientes th, .tabela-clientes td {
       padding: 8px 8px;
@@ -643,7 +702,7 @@
       color: white;
       border: none;
       border-radius: 30px;
-      padding: 5px 12px;
+      padding: 4px 10px;
       font-size: 12px;
       font-weight: bold;
       cursor: pointer;
@@ -653,6 +712,23 @@
     }
     .btn-excluir-cliente:hover {
       background: #c82333;
+      transform: scale(1.05);
+    }
+    .btn-editar {
+      background: #ffaa33;
+      color: #0a2b1a;
+      border: none;
+      border-radius: 30px;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+      margin-left: 10px;
+      border: 1px solid #ffd966;
+    }
+    .btn-editar:hover {
+      background: #ffc107;
       transform: scale(1.05);
     }
 
@@ -700,7 +776,7 @@
 
   <section class="hero">
     <h1>Participe das Rifas On-Line</h1>
-    <div class="info-lotece">Sorteios pela Lotece -  1ª Dezena do 1º Prêmio do sorteio da Noite às 19:30 h</div>
+    <div class="info-lotece">Sorteios pela Lotece -  Dezena do 1º Prêmio do sorteio da Noite às 19:30 h</div>
   </section>
 
   <!-- cards das rifas serão inseridos aqui via JS -->
@@ -755,7 +831,7 @@
       });
 
       // ---------- BANCO DE DADOS LOCAL ----------
-      let RIFAS = [];         // array de rifas (cada rifa é um objeto)
+      let RIFAS = [];
 
       // carregar do localStorage
       try {
@@ -776,21 +852,12 @@
       // ---------- FUNÇÃO PARA ENCONTRAR O MENOR ID DISPONÍVEL ----------
       function encontrarProximoIdDisponivel() {
         if (RIFAS.length === 0) return 1;
-        
-        // Coleta todos os IDs existentes
         const idsExistentes = RIFAS.map(r => r.id).sort((a, b) => a - b);
-        
-        // Procura o primeiro gap na sequência
         let idEsperado = 1;
         for (let id of idsExistentes) {
-          if (id > idEsperado) {
-            // Encontrou um gap, retorna o idEsperado
-            return idEsperado;
-          }
+          if (id > idEsperado) return idEsperado;
           idEsperado = id + 1;
         }
-        
-        // Se não encontrou gap, retorna o próximo número
         return idEsperado;
       }
 
@@ -803,56 +870,65 @@
       function excluirCliente(rifaId, numeroBola) {
         const rifa = RIFAS.find(r => r.id === rifaId);
         if (!rifa) return false;
-        
         const bola = rifa.bolas.find(b => b.numero === numeroBola);
         if (!bola) return false;
-        
-        // Só permite excluir se for comprada (não pode excluir ganhadora)
         if (bola.status !== 'comprada') {
           alertaModerno('Aviso', '❌', 'Apenas bolas compradas (amarelas) podem ser liberadas.');
           return false;
         }
-        
-        // Limpa os dados do cliente e volta para disponível
         bola.status = 'disponivel';
         bola.clienteNome = null;
         bola.clienteTel = null;
-        
         salvarDados();
         return true;
+      }
+
+      // ---------- FUNÇÃO PARA EDITAR INFORMAÇÕES DA RIFA ----------
+      async function editarRifa(rifa) {
+        const novoNome = await promptModerno('Editar nome do produto', 'Digite o novo nome', false);
+        if (novoNome !== null && novoNome !== '') rifa.nomeProduto = novoNome;
+        
+        const novoSobre = await promptModerno('Editar descrição do produto', 'Digite a nova descrição', false);
+        if (novoSobre !== null && novoSobre !== '') rifa.sobreProduto = novoSobre;
+        
+        const novoValor = await promptModerno('Editar valor do ponto (R$)', 'Ex: 10.00', false);
+        if (novoValor !== null && novoValor !== '') rifa.valorPonto = novoValor;
+        
+        const novaChavePix = await promptModerno('Editar chave PIX', 'Digite a chave PIX', false);
+        if (novaChavePix !== null && novaChavePix !== '') rifa.chavePix = novaChavePix;
+        
+        const novoTelefone = await promptModerno('Editar telefone do criador', 'Ex: 11999999999', false);
+        if (novoTelefone !== null && novoTelefone !== '') rifa.telefoneCriador = novoTelefone;
+        
+        const novaData = await promptModerno('Editar data do sorteio (AAAA-MM-DD)', 'Ex: 2025-12-31', false);
+        if (novaData !== null && novaData !== '') rifa.dataSorteio = novaData;
+        
+        salvarDados();
+        alertaModerno('Sucesso', '✅', 'Rifa atualizada com sucesso!');
       }
 
       // ---------- FUNÇÃO PARA ABRIR WHATSAPP DO VENCEDOR ----------
       function abrirWhatsappVencedor(telefone) {
         if (!telefone) return;
-        
-        // Remove caracteres não numéricos e adiciona +55
         let tel = telefone.replace(/\D/g, '');
-        if (tel.length >= 10 && tel.length <= 11) {
-          tel = '55' + tel;
-        } else {
-          tel = '55' + tel;
-        }
+        tel = '55' + tel;
         window.open(`https://wa.me/${tel}`, '_blank');
       }
 
       // ---------- FUNÇÃO PARA AMPLIAR IMAGEM ----------
       function ampliarImagem(src) {
         if (!src) return;
-        
         const modal = document.createElement('div');
         modal.className = 'imagem-modal';
         modal.onclick = () => document.body.removeChild(modal);
-        
         const img = document.createElement('img');
         img.src = src;
         img.alt = 'Imagem ampliada';
-        
         modal.appendChild(img);
         document.body.appendChild(modal);
       }
 
-      // ---------- ALERTA MODERNO (DO CÓDIGO ANTERIOR) ----------
+      // ---------- ALERTA MODERNO ----------
       function alertaModerno(titulo, icone, mensagem) {
         return new Promise((resolve) => {
           const overlay = document.createElement('div');
@@ -866,7 +942,6 @@
             </div>
           `;
           document.body.appendChild(overlay);
-
           overlay.querySelector('#btnOkAlerta').addEventListener('click', () => {
             document.body.removeChild(overlay);
             resolve();
@@ -874,7 +949,7 @@
         });
       }
 
-      // ---------- PROMPT MODERNO (DO CÓDIGO ANTERIOR) ----------
+      // ---------- PROMPT MODERNO (SEM TEXTO CARREGADO) ----------
       function promptModerno(titulo, placeholder, isPassword = false) {
         return new Promise((resolve) => {
           const overlay = document.createElement('div');
@@ -890,7 +965,6 @@
             </div>
           `;
           document.body.appendChild(overlay);
-
           const input = overlay.querySelector('#promptInput');
           overlay.querySelector('#confirmBtn').addEventListener('click', () => {
             document.body.removeChild(overlay);
@@ -917,27 +991,116 @@
           <div class="modal-card" style="max-width: 700px;">
             <h2>📋 Termo de Uso da Plataforma</h2>
             <p style="color: #ffd966; font-size: 18px; margin-bottom: 20px;">Esta Aplicação é livre e fica sob a responsabilidade do usuário o uso desta plataforma.</p>
-            
             <div style="background: #0d391f; padding: 20px; border-radius: 30px; margin: 20px 0;">
               <p style="color: white; margin: 10px 0;"><span style="color: #ffaa33;">⚠️</span> <strong style="color: #ffd966;">Ao criar uma Rifa:</strong> opte por cadastrar uma chave Pix aleatória gerada no seu banco ou e-mail. Não é aconselhável cadastrar chave Pix com número de telefone ou CPF, pois a chave é exibida na Rifa para os usuários compradores copiarem e efetuarem os pagamentos.</p>
-              
               <p style="color: white; margin: 15px 0;"><span style="color: #4ec0e9;">🎲</span> <strong style="color: #ffd966;">Os Sorteios</strong> deverão ser baseados nos sorteios da Loteria Estadual do Ceará (Lotece), para evitar possíveis fraudes em sorteios.</p>
-              
               <p style="color: white; margin: 15px 0;"><span style="color: #4ec0e9;">📱</span> <strong style="color: #ffd966;">Cadastre corretamente</strong> seus dados no sistema: número de contato e e-mail, pois os mesmos serão usados para contato em eventual pagamento ou premiação.</p>
             </div>
-            
             <p style="color: #00ff9c; font-size: 20px; text-align: center; margin: 20px 0;">Divirta-se! 🎉</p>
-            
             <div style="display: flex; justify-content: center;">
               <button id="btnAceitarTermo" class="btn-termo">Entendi e Aceito</button>
             </div>
           </div>
         `;
         document.body.appendChild(overlay);
-
         overlay.querySelector('#btnAceitarTermo').addEventListener('click', () => {
           document.body.removeChild(overlay);
           localStorage.setItem('termo_aceito', 'true');
+        });
+      }
+
+      // ---------- FUNÇÃO ADMIN (ACESSO COM EMAIL E SENHA) ----------
+      function acessarAdmin() {
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        overlay.innerHTML = `
+          <div class="swal-modal-moderno">
+            <h3 style="color:orange; margin-bottom:20px;">👑 Acesso Administrativo</h3>
+            <input type="text" id="adminEmail" class="swal-input-moderno" placeholder="E-mail do administrador" autofocus>
+            <input type="password" id="adminSenha" class="swal-input-moderno" placeholder="Senha de acesso">
+            <div style="display:flex; gap:15px; justify-content:center; margin-top:25px;">
+              <button class="swal-button" id="confirmAdmin">Acessar</button>
+              <button class="swal-button btn-sec" id="cancelAdmin">Cancelar</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(overlay);
+        
+        overlay.querySelector('#confirmAdmin').addEventListener('click', () => {
+          const email = overlay.querySelector('#adminEmail').value;
+          const senha = overlay.querySelector('#adminSenha').value;
+          if (email && senha === '011010') {
+            document.body.removeChild(overlay);
+            abrirPainelAdmin();
+          } else {
+            alertaModerno('Acesso negado', '❌', 'Credenciais inválidas!');
+            document.body.removeChild(overlay);
+          }
+        });
+        overlay.querySelector('#cancelAdmin').addEventListener('click', () => {
+          document.body.removeChild(overlay);
+        });
+      }
+
+      // ---------- PAINEL ADMIN (APAGAR QUALQUER CONTA E RIFA) ----------
+      function abrirPainelAdmin() {
+        if (RIFAS.length === 0) {
+          alertaModerno('Painel Admin', '📋', 'Nenhuma rifa cadastrada no sistema.');
+          return;
+        }
+        
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        const modal = document.createElement('div');
+        modal.className = 'modal-card';
+        modal.style.maxWidth = '800px';
+        modal.innerHTML = `
+          <div class="crown-icon" onclick="acessarAdmin()" style="position: static; margin-bottom: 10px; display: inline-block;">👑</div>
+          <h2>👑 Painel Administrativo</h2>
+          <p style="color:#ffd966;">Todas as rifas cadastradas no sistema:</p>
+          <div id="adminRifasList" style="margin: 20px 0;"></div>
+          <button class="btn-sec" id="fecharAdmin">Fechar</button>
+        `;
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+        
+        const listDiv = modal.querySelector('#adminRifasList');
+        
+        RIFAS.forEach(rifa => {
+          const rifaDiv = document.createElement('div');
+          rifaDiv.style.background = '#134b21';
+          rifaDiv.style.borderRadius = '20px';
+          rifaDiv.style.padding = '12px';
+          rifaDiv.style.marginBottom = '15px';
+          rifaDiv.style.display = 'flex';
+          rifaDiv.style.justifyContent = 'space-between';
+          rifaDiv.style.alignItems = 'center';
+          rifaDiv.style.flexWrap = 'wrap';
+          rifaDiv.style.gap = '10px';
+          
+          rifaDiv.innerHTML = `
+            <div style="flex:1;">
+              <strong style="color:#ffaa33;">ID: ${formatarId(rifa.id)}</strong><br>
+              <span>${escapeHTML(rifa.nomeProduto)}</span><br>
+              <small>Criador: ${escapeHTML(rifa.criadorEmail)}</small>
+            </div>
+            <button id="delRifa_${rifa.id}" style="background:#dc3545; color:white; border:none; border-radius:30px; padding:6px 16px; cursor:pointer;">🗑️ Apagar Rifa</button>
+          `;
+          listDiv.appendChild(rifaDiv);
+          
+          document.getElementById(`delRifa_${rifa.id}`).addEventListener('click', () => {
+            if (confirm(`Tem certeza que deseja apagar a rifa "${rifa.nomeProduto}" (ID: ${formatarId(rifa.id)})?`)) {
+              RIFAS = RIFAS.filter(r => r.id !== rifa.id);
+              salvarDados();
+              document.body.removeChild(overlay);
+              alertaModerno('Rifa removida', '🗑️', 'Rifa removida com sucesso!');
+              abrirPainelAdmin();
+            }
+          });
+        });
+        
+        modal.querySelector('#fecharAdmin').addEventListener('click', () => {
+          document.body.removeChild(overlay);
         });
       }
 
@@ -945,19 +1108,17 @@
       function gerarNumeros(qtd) {
         const nums = [];
         for (let i = 0; i < qtd; i++) {
-          nums.push(i.toString().padStart(2, '0')); // 00, 01...
+          nums.push(i.toString().padStart(2, '0'));
         }
         return nums;
       }
 
-      // formatar data brasileira
       function formatarDataBR(dataISO) {
         if (!dataISO) return 'não definida';
         const [ano, mes, dia] = dataISO.split('-');
         return `${dia}/${mes}/${ano}`;
       }
 
-      // formatar valor em reais
       function formatarValor(valor) {
         if (!valor) return 'Valor não definido';
         return `R$ ${parseFloat(valor).toFixed(2)}`;
@@ -977,13 +1138,11 @@
           card.className = 'rifa-card';
           card.dataset.id = rifa.id;
 
-          // ID da rifa formatado com 2 dígitos
           const idDiv = document.createElement('div');
           idDiv.className = 'card-id';
           idDiv.textContent = `ID: ${formatarId(rifa.id)}`;
           card.appendChild(idDiv);
 
-          // imagem com clique para ampliar
           const imgDiv = document.createElement('div');
           imgDiv.className = 'produto-imagem';
           if (rifa.imagemData) {
@@ -997,27 +1156,17 @@
             imgDiv.textContent = '📷';
           }
 
-          // corpo
           const content = document.createElement('div');
           content.className = 'card-content';
-          
-          // informações do card
           const dataFormatada = formatarDataBR(rifa.dataSorteio);
           const valorFormatado = formatarValor(rifa.valorPonto);
-          
           content.innerHTML = `
             <div class="produto-nome">${escapeHTML(rifa.nomeProduto)}</div>
             <div class="produto-sobre">${escapeHTML(rifa.sobreProduto) || '—'}</div>
-            <div class="valor-ponto">
-              <span>💰</span> Valor do ponto: <span>${valorFormatado}</span>
-            </div>
-            <div class="info-sorteio">
-              <span>📅 ${dataFormatada}</span>
-              <span>🔢 ${rifa.bolas.length} bolas</span>
-            </div>
+            <div class="valor-ponto"><span>💰</span> Valor do ponto: <span>${valorFormatado}</span></div>
+            <div class="info-sorteio"><span>📅 ${dataFormatada}</span><span>🔢 ${rifa.bolas.length} bolas</span></div>
           `;
 
-          // adicionar chave PIX se existir
           if (rifa.chavePix) {
             const pixDiv = document.createElement('div');
             pixDiv.className = 'pix-info';
@@ -1028,7 +1177,6 @@
             content.appendChild(pixDiv);
           }
 
-          // bolas
           const bolasWrap = document.createElement('div');
           bolasWrap.className = 'bolas-grid';
           rifa.bolas.forEach((bola, idx) => {
@@ -1048,14 +1196,10 @@
             };
             bolasWrap.appendChild(bolaEl);
           });
-
           content.appendChild(bolasWrap);
 
-          // footer do card com dois botões
           const footerDiv = document.createElement('div');
           footerDiv.className = 'card-footer';
-          
-          // Botão Finalizar Sorteio (laranja)
           const btnFinal = document.createElement('button');
           btnFinal.className = 'btn-footer btn-finalizar';
           btnFinal.textContent = 'Finalizar Sorteio';
@@ -1063,28 +1207,19 @@
             e.stopPropagation();
             finalizarSorteio(rifa.id);
           };
-          
-          // Botão Enviar Comprovante (verde) - Código do país +55 adicionado automaticamente
           const btnWhats = document.createElement('button');
           btnWhats.className = 'btn-footer btn-whatsapp';
           btnWhats.textContent = 'Enviar Comprovante';
           btnWhats.onclick = (e) => {
             e.stopPropagation();
             if (rifa.telefoneCriador) {
-              // Remove caracteres não numéricos e adiciona +55
               let telefone = rifa.telefoneCriador.replace(/\D/g, '');
-              // Garante que o telefone tenha DDD (8 ou 9 dígitos após DDD)
-              if (telefone.length >= 10 && telefone.length <= 11) {
-                telefone = '55' + telefone;
-              } else {
-                telefone = '55' + telefone; // Adiciona 55 mesmo se tiver formatação estranha
-              }
+              telefone = '55' + telefone;
               window.open(`https://wa.me/${telefone}`, '_blank');
             } else {
               alertaModerno('Aviso', '📱', 'Criador não cadastrou número para contato.');
             }
           };
-          
           footerDiv.appendChild(btnFinal);
           footerDiv.appendChild(btnWhats);
 
@@ -1095,7 +1230,6 @@
         });
       }
 
-      // função global para copiar PIX
       window.copiarPix = function(chave) {
         navigator.clipboard.writeText(chave).then(() => {
           alertaModerno('Sucesso', '✅', 'Chave PIX copiada!');
@@ -1104,7 +1238,6 @@
         });
       };
 
-      // escape simples
       function escapeHTML(str) {
         if (!str) return '';
         return String(str).replace(/[&<>"]/g, function(m) {
@@ -1116,7 +1249,7 @@
         });
       }
 
-      // ---------- COMPRAR BOLA (cliente) ----------
+      // ---------- COMPRAR BOLA ----------
       async function comprarBola(rifaId, indexBola) {
         const rifa = RIFAS.find(r => r.id === rifaId);
         if (!rifa) return;
@@ -1132,11 +1265,10 @@
         bola.clienteNome = nome;
         bola.clienteTel = telefone;
         salvarDados();
-        
         alertaModerno('Bola reservada', '✅', `Bola ${bola.numero} reservada com sucesso!`);
       }
 
-      // ---------- FINALIZAR SORTEIO (somente criador com senha) ----------
+      // ---------- FINALIZAR SORTEIO ----------
       async function finalizarSorteio(rifaId) {
         const rifa = RIFAS.find(r => r.id === rifaId);
         if (!rifa) return;
@@ -1150,23 +1282,26 @@
         alertaModerno('Rifa finalizada', '🗑️', 'Rifa removida com sucesso!');
       }
 
-      // ---------- MODAL CRIAÇÃO DE RIFA ----------
+      // ---------- MODAL CRIAÇÃO DE RIFA (com email e senha pessoal) ----------
       window.abrirCriacaoRifa = async function() {
         const email = await promptModerno('🔐 Autenticação (e-mail)', 'seu@email.com');
         if (!email || !email.includes('@')) {
           alertaModerno('E-mail inválido', '❌', 'Por favor, digite um e-mail válido.');
           return;
         }
+        
+        const senhaPessoal = await promptModerno('🔐 Crie uma senha pessoal', 'senha', true);
+        if (!senhaPessoal) {
+          alertaModerno('Senha necessária', '❌', 'Você precisa criar uma senha para acessar sua rifa.');
+          return;
+        }
 
-        // overlay
         const overlay = document.createElement('div');
         overlay.className = 'modal-overlay';
         overlay.id = 'modalCriarRifa';
-
         const modal = document.createElement('div');
         modal.className = 'modal-card';
         
-        // data atual no formato yyyy-mm-dd
         const hoje = new Date();
         const ano = hoje.getFullYear();
         const mes = String(hoje.getMonth() + 1).padStart(2, '0');
@@ -1219,7 +1354,6 @@
         overlay.appendChild(modal);
         document.body.appendChild(overlay);
 
-        // upload de imagem
         const fileTrigger = modal.querySelector('#fileUploadTrigger');
         const fileInput = modal.querySelector('#fileInput');
         let imagemBase64 = null;
@@ -1238,7 +1372,6 @@
           }
         });
 
-        // gerar rifa
         modal.querySelector('#gerarRifaBtn').addEventListener('click', () => {
           const nome = document.getElementById('nomeProduto').value.trim() || 'Sem nome';
           const sobre = document.getElementById('sobreProduto').value.trim() || '—';
@@ -1260,7 +1393,6 @@
             clienteTel: null
           }));
 
-          // Encontra o próximo ID disponível (menor número livre)
           const novoId = encontrarProximoIdDisponivel();
 
           const novaRifa = {
@@ -1271,6 +1403,7 @@
             bolas: bolas,
             valorPonto: valorPonto,
             senha: senha,
+            senhaPessoal: senhaPessoal,
             telefoneCriador: telefoneCriador,
             chavePix: chavePix,
             dataSorteio: dataSorteio,
@@ -1279,10 +1412,7 @@
 
           RIFAS.push(novaRifa);
           salvarDados();
-
-          // fechar modal
           document.body.removeChild(overlay);
-          
           alertaModerno('Rifa criada!', '🎉', 'Sua rifa foi criada com sucesso!');
         });
 
@@ -1291,35 +1421,29 @@
         });
       };
 
-      // ---------- LINK MINHAS RIFAS (autenticação por senha da rifa) ----------
+      // ---------- LINK MINHAS RIFAS (autenticação por senha pessoal) ----------
       document.getElementById('linkMinhasRifas').addEventListener('click', async () => {
-        // Primeiro solicita o ID da rifa
         const idRifa = await promptModerno('Digite o ID da rifa (está no card)', 'ex: 01');
         if (!idRifa) return;
-        
-        // Converte para número (remove zeros à esquerda)
         const idNumerico = parseInt(idRifa, 10);
-        
         const rifa = RIFAS.find(r => r.id === idNumerico);
         if (!rifa) {
           alertaModerno('Erro', '❌', 'Rifa não encontrada!');
           return;
         }
 
-        // Solicita a senha da rifa
-        const senhaRifa = await promptModerno('Digite a senha da rifa', 'senha', true);
-        if (senhaRifa !== rifa.senha) {
-          alertaModerno('Erro', '❌', 'Senha incorreta!');
+        const senhaPessoal = await promptModerno('Digite sua senha pessoal', 'senha', true);
+        if (senhaPessoal !== rifa.senhaPessoal) {
+          alertaModerno('Erro', '❌', 'Senha pessoal incorreta!');
           return;
         }
 
-        // Mostra apenas as informações da rifa específica
         const overlay = document.createElement('div');
         overlay.className = 'modal-overlay';
         const modal = document.createElement('div');
         modal.className = 'modal-card';
         modal.style.maxWidth = '800px';
-        modal.innerHTML = '<h2>📋 Dados da Rifa</h2><div id="conteudoMinhasRifas"></div><button class="btn-sec" id="fecharMinhasRifas">Fechar</button>';
+        modal.innerHTML = '<div class="crown-icon" onclick="acessarAdmin()" style="position: absolute; top: 20px; right: 25px;">👑</div><h2>📋 Dados da Rifa</h2><div id="conteudoMinhasRifas"></div><button class="btn-sec" id="fecharMinhasRifas">Fechar</button>';
         overlay.appendChild(modal);
         document.body.appendChild(overlay);
 
@@ -1330,32 +1454,26 @@
         divRifa.style.borderRadius = '20px';
         divRifa.style.padding = '15px';
         divRifa.style.marginBottom = '20px';
-        divRifa.innerHTML = `<h3 style="color:orange;">${escapeHTML(rifa.nomeProduto)} (ID: ${formatarId(rifa.id)})</h3>`;
+        divRifa.innerHTML = `<h3 style="color:orange;">${escapeHTML(rifa.nomeProduto)} (ID: ${formatarId(rifa.id)}) 
+          <button class="btn-editar" onclick="editarRifa(${JSON.stringify(rifa).replace(/"/g, '&quot;')})">✏️ Editar</button>
+        </h3>`;
 
         const compradas = rifa.bolas.filter(b => b.status !== 'disponivel');
         if (compradas.length === 0) {
           divRifa.innerHTML += '<p>Nenhuma bola comprada ainda.</p>';
         } else {
-          // Adiciona wrapper com scroll horizontal
           const wrapper = document.createElement('div');
           wrapper.className = 'tabela-wrapper';
-          
           const tabela = document.createElement('table');
           tabela.className = 'tabela-clientes';
-          tabela.innerHTML = '<tr><th>Nº</th><th>Cliente</th><th>Telefone</th><th>Status</th><th>Ação</th></tr>';
+          tabela.innerHTML = '<td><th>Nº</th><th>Cliente</th><th>Telefone</th><th>Status</th><th>Ação</th></tr>';
           compradas.forEach(b => {
             const row = tabela.insertRow();
             const statusTexto = b.status === 'ganhadora' ? '🏆 Vencedor' : 'Comprada';
-            
-            // Coluna número
             const cellNum = row.insertCell();
             cellNum.textContent = b.numero;
-            
-            // Coluna cliente
             const cellCliente = row.insertCell();
             cellCliente.textContent = b.clienteNome || '-';
-            
-            // Coluna telefone (clicável se for vencedor)
             const cellTel = row.insertCell();
             if (b.status === 'ganhadora' && b.clienteTel) {
               const telSpan = document.createElement('span');
@@ -1366,12 +1484,8 @@
             } else {
               cellTel.textContent = b.clienteTel || '-';
             }
-            
-            // Coluna status
             const cellStatus = row.insertCell();
             cellStatus.textContent = statusTexto;
-            
-            // Coluna ação
             const cellAcao = row.insertCell();
             if (b.status === 'comprada') {
               const btnExcluir = document.createElement('button');
@@ -1391,16 +1505,20 @@
               cellAcao.textContent = '-';
             }
           });
-          
           wrapper.appendChild(tabela);
           divRifa.appendChild(wrapper);
         }
 
         const divVenc = document.createElement('div');
         divVenc.className = 'vencedor-linha';
-        divVenc.innerHTML = '<label>Definir bola vencedora (ex: 07): </label><input type="text" id="numVenc_'+rifa.id+'" placeholder="00" size="3"> <button id="btnVenc_'+rifa.id+'">Salvar vencedor</button>';
+        divVenc.innerHTML = `
+          <label>Definir bola vencedora:</label>
+          <div>
+            <input type="text" id="numVenc_${rifa.id}" placeholder="00" size="3" maxlength="2">
+            <button id="btnVenc_${rifa.id}">Salvar vencedor</button>
+          </div>
+        `;
         divRifa.appendChild(divVenc);
-
         conteudo.appendChild(divRifa);
 
         document.getElementById('btnVenc_'+rifa.id).addEventListener('click', () => {
@@ -1426,15 +1544,15 @@
         modal.querySelector('#fecharMinhasRifas').addEventListener('click', () => document.body.removeChild(overlay));
       });
 
-      // ---------- INICIALIZAÇÃO: MOSTRAR TERMO DE USO ----------
-      // Verifica se já aceitou o termo
+      // Expor funções para escopo global
+      window.editarRifa = editarRifa;
+      window.acessarAdmin = acessarAdmin;
+
       const termoAceito = localStorage.getItem('termo_aceito');
       if (!termoAceito) {
-        // Pequeno delay para garantir que a página carregou
         setTimeout(mostrarTermoUso, 500);
       }
 
-      // inicializar render
       renderizarRifas();
     })();
   </script>
