@@ -844,6 +844,18 @@ header {
           .eq('numero', numeroBola);
         
         if (error) throw error;
+        
+        // Atualizar localmente imediatamente para evitar atraso
+        const rifa = RIFAS.find(r => r.id === rifaId);
+        if (rifa) {
+          const bola = rifa.bolas.find(b => b.numero === numeroBola);
+          if (bola) {
+            bola.status = dadosBola.status;
+            bola.clienteNome = dadosBola.clienteNome;
+            bola.clienteTel = dadosBola.clienteTel;
+            salvarDadosLocal();
+          }
+        }
       }
 
       async function removerRifaDoSupabase(rifaId) {
@@ -856,10 +868,78 @@ header {
 
       function iniciarEscutaRealtime() {
         if (subscription) subscription.unsubscribe();
+        
         subscription = supabaseClient
           .channel('rifas-channel')
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'rifas' }, () => carregarRifasDoSupabase())
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'bolas' }, () => carregarRifasDoSupabase())
+          // Escutar mudanças na tabela rifas
+          .on('postgres_changes', 
+            { event: '*', schema: 'public', table: 'rifas' },
+            (payload) => {
+              console.log('Mudança em rifas:', payload);
+              // Atualizar apenas a rifa alterada em vez de recarregar tudo
+              if (payload.eventType === 'INSERT') {
+                carregarRifasDoSupabase(); // Recarrega tudo para pegar a nova rifa com bolas
+              } else if (payload.eventType === 'UPDATE') {
+                carregarRifasDoSupabase();
+              } else if (payload.eventType === 'DELETE') {
+                carregarRifasDoSupabase();
+              }
+            }
+          )
+          // Escutar mudanças na tabela bolas (isso é o mais importante para tempo real)
+          .on('postgres_changes',
+            { event: '*', schema: 'public', table: 'bolas' },
+            (payload) => {
+              console.log('Mudança em bolas:', payload);
+              // Atualização em tempo real das bolas sem recarregar tudo
+              const { new: novaBola, old: bolaAntiga, eventType } = payload;
+              const rifaId = novaBola?.rifa_id || bolaAntiga?.rifa_id;
+              
+              if (rifaId) {
+                // Encontrar a rifa localmente e atualizar apenas a bola alterada
+                const rifaIndex = RIFAS.findIndex(r => r.id === rifaId);
+                if (rifaIndex !== -1) {
+                  const rifa = RIFAS[rifaIndex];
+                  const bolaIndex = rifa.bolas.findIndex(b => b.numero === (novaBola?.numero || bolaAntiga?.numero));
+                  
+                  if (eventType === 'UPDATE' && novaBola) {
+                    if (bolaIndex !== -1) {
+                      // Atualizar bola existente
+                      rifa.bolas[bolaIndex] = {
+                        numero: novaBola.numero,
+                        status: novaBola.status,
+                        clienteNome: novaBola.cliente_nome,
+                        clienteTel: novaBola.cliente_tel
+                      };
+                    }
+                  } else if (eventType === 'INSERT' && novaBola) {
+                    // Adicionar nova bola (quando aumenta quantidade)
+                    if (bolaIndex === -1) {
+                      rifa.bolas.push({
+                        numero: novaBola.numero,
+                        status: novaBola.status,
+                        clienteNome: novaBola.cliente_nome,
+                        clienteTel: novaBola.cliente_tel
+                      });
+                      // Ordenar bolas
+                      rifa.bolas.sort((a, b) => parseInt(a.numero) - parseInt(b.numero));
+                    }
+                  } else if (eventType === 'DELETE' && bolaAntiga) {
+                    // Remover bola (quando diminui quantidade)
+                    if (bolaIndex !== -1) {
+                      rifa.bolas.splice(bolaIndex, 1);
+                    }
+                  }
+                  
+                  // Salvar e re-renderizar
+                  salvarDadosLocal();
+                } else {
+                  // Se a rifa não foi encontrada localmente, recarregar tudo
+                  carregarRifasDoSupabase();
+                }
+              }
+            }
+          )
           .subscribe();
       }
 
@@ -1574,7 +1654,7 @@ header {
           wrapper.className = 'tabela-wrapper';
           const tabela = document.createElement('table');
           tabela.className = 'tabela-clientes';
-          tabela.innerHTML = '<tr><th>Nº</th><th>Cliente</th><th>Telefone</th><th>Status</th><th>Ação</th></tr>';
+          tabela.innerHTML = '青少年<th>Nº</th><th>Cliente</th><th>Telefone</th><th>Status</th><th>Ação</th>39';
           compradas.forEach(b => {
             const row = tabela.insertRow();
             row.insertCell().textContent = b.numero;
