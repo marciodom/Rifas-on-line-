@@ -23,7 +23,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <style>
-    /* ===== Estilos (mantidos iguais) ===== */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -41,66 +40,46 @@
     }
 
     header {
-  border-bottom: 4px solid orange;
-  padding: 15px 20px;
-  background: #021b0f;
-  text-align: center;
-  position: relative;
-}
+      border-bottom: 4px solid orange;
+      padding: 15px 20px;
+      background: #021b0f;
+      text-align: center;
+      position: relative;
+    }
 
-.logo {
-  font-size: 32px;
-  font-weight: bold;
-  text-align: center;
-}
-
-header {
-  border-bottom: 4px solid orange;
-  padding: 15px 20px;
-  background: #021b0f;
-  text-align: center;
-  position: relative;
-}
-
-.header-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.logo {
-  font-size: 32px;
-  font-weight: bold;
-  text-align: center;
-  flex: 1;
-}
-
-.header-left, .header-right {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(255,165,0,0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  cursor: pointer;
-  transition: 0.2s;
-  flex-shrink: 0;
-}
-
-.header-left:hover, .header-right:hover {
-  background: rgba(255,165,0,0.6);
-  transform: scale(1.05);
-}
+    .header-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
 
     .logo {
       font-size: 32px;
       font-weight: bold;
       text-align: center;
+      flex: 1;
     }
     .logo span { color: orange; }
+
+    .header-left, .header-right {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,165,0,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      cursor: pointer;
+      transition: 0.2s;
+      flex-shrink: 0;
+    }
+
+    .header-left:hover, .header-right:hover {
+      background: rgba(255,165,0,0.6);
+      transform: scale(1.05);
+    }
 
     nav {
       display: flex;
@@ -198,10 +177,6 @@ header {
       background: #0d2f1a;
       display: block;
       transition: 0.3s;
-    }
-    .produto-imagem img.ampliada {
-      object-fit: contain;
-      background: rgba(0,0,0,0.9);
     }
     .sem-imagem {
       font-size: 48px;
@@ -343,7 +318,7 @@ header {
       padding: 4px 0;
       border: 1px solid #aaa;
     }
-    .bola span { /* nome do cliente */
+    .bola span {
       font-size: 8px;
       font-weight: normal;
       color: #222;
@@ -430,7 +405,6 @@ header {
       font-size: 14px;
     }
 
-    /* Modais e alertas (mantidos) */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -676,27 +650,26 @@ header {
   </style>
 </head>
 <body>
-  <!-- Botão de instalação PWA -->
   <div class="install-container">
     <button id="installButton" class="install-btn">📱 Instalar App</button>
   </div>
 
   <header>
-  <div class="header-container">
-    <div class="header-left" onclick="acessarAdmin()">👑</div>
-    <div class="logo">RIFAS <span>ON-LINE</span></div>
-    <div class="header-right" onclick="window.location.href='mailto:marciodom99@gmail.com?subject=Contato%20sobre%20Rifas'">📢</div>
-  </div>
-  <nav>
-    <a href="https://lotece.com.br" target="_blank">Site Lotece</a>
-    <a id="linkMinhasRifas">Minhas Rifas</a>
-    <a id="criarRifaLink">Criar Rifa</a>
-  </nav>
-</header>
+    <div class="header-container">
+      <div class="header-left" onclick="acessarAdmin()">👑</div>
+      <div class="logo">RIFAS <span>ON-LINE</span></div>
+      <div class="header-right" onclick="window.location.href='mailto:marciodom99@gmail.com?subject=Contato%20sobre%20Rifas'">📢</div>
+    </div>
+    <nav>
+      <a href="https://lotece.com.br" target="_blank">Site Lotece</a>
+      <a id="linkMinhasRifas">Minhas Rifas</a>
+      <a id="criarRifaLink">Criar Rifa</a>
+    </nav>
+  </header>
 
   <section class="hero">
     <h1>Participe das Rifas On-Line</h1>
-    <div class="info-lotece">Sorteios pela Lotece -  Dezena do 1º Prêmio do sorteio da Noite às 19:30 h</div>
+    <div class="info-lotece">Sorteios pela Lotece - Dezena do 1º Prêmio do sorteio da Noite às 19:30 h</div>
   </section>
 
   <div id="rifasContainer" class="rifas-container"></div>
@@ -712,7 +685,6 @@ header {
 
   <script>
     (function() {
-      // ==================== CONFIGURAÇÃO SUPABASE ====================
       const SUPABASE_URL = 'https://fjkeiutbmeynsoryxhxe.supabase.co';
       const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqa2VpdXRibWV5bnNvcnl4aHhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMjI0MjgsImV4cCI6MjA4OTU5ODQyOH0.4BezPn_tqPdgdL9jQyrNK0Y8Ii9MP0m8Jteq7O63MDI';
       const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -720,7 +692,6 @@ header {
       let subscription = null;
       let RIFAS = [];
 
-      // ---------- FUNÇÕES AUXILIARES (mantidas) ----------
       function salvarDadosLocal() {
         try {
           localStorage.setItem('rifas_onlines', JSON.stringify(RIFAS));
@@ -832,6 +803,8 @@ header {
       }
 
       async function atualizarBolaNoSupabase(rifaId, numeroBola, dadosBola) {
+        console.log('🔄 Enviando atualização:', { rifaId, numeroBola, dadosBola });
+        
         const { error } = await supabaseClient
           .from('bolas')
           .update({
@@ -843,19 +816,12 @@ header {
           .eq('rifa_id', rifaId)
           .eq('numero', numeroBola);
         
-        if (error) throw error;
-        
-        // Atualizar localmente imediatamente para evitar atraso
-        const rifa = RIFAS.find(r => r.id === rifaId);
-        if (rifa) {
-          const bola = rifa.bolas.find(b => b.numero === numeroBola);
-          if (bola) {
-            bola.status = dadosBola.status;
-            bola.clienteNome = dadosBola.clienteNome;
-            bola.clienteTel = dadosBola.clienteTel;
-            salvarDadosLocal();
-          }
+        if (error) {
+          console.error('❌ Erro no Supabase:', error);
+          throw error;
         }
+        
+        console.log('✅ Bola atualizada no servidor');
       }
 
       async function removerRifaDoSupabase(rifaId) {
@@ -869,81 +835,34 @@ header {
       function iniciarEscutaRealtime() {
         if (subscription) subscription.unsubscribe();
         
+        console.log('🔄 Iniciando escuta Realtime...');
+        
         subscription = supabaseClient
           .channel('rifas-channel')
-          // Escutar mudanças na tabela rifas
           .on('postgres_changes', 
-            { event: '*', schema: 'public', table: 'rifas' },
-            (payload) => {
-              console.log('Mudança em rifas:', payload);
-              // Atualizar apenas a rifa alterada em vez de recarregar tudo
-              if (payload.eventType === 'INSERT') {
-                carregarRifasDoSupabase(); // Recarrega tudo para pegar a nova rifa com bolas
-              } else if (payload.eventType === 'UPDATE') {
-                carregarRifasDoSupabase();
-              } else if (payload.eventType === 'DELETE') {
-                carregarRifasDoSupabase();
-              }
-            }
-          )
-          // Escutar mudanças na tabela bolas (isso é o mais importante para tempo real)
-          .on('postgres_changes',
             { event: '*', schema: 'public', table: 'bolas' },
             (payload) => {
-              console.log('Mudança em bolas:', payload);
-              // Atualização em tempo real das bolas sem recarregar tudo
-              const { new: novaBola, old: bolaAntiga, eventType } = payload;
-              const rifaId = novaBola?.rifa_id || bolaAntiga?.rifa_id;
-              
-              if (rifaId) {
-                // Encontrar a rifa localmente e atualizar apenas a bola alterada
-                const rifaIndex = RIFAS.findIndex(r => r.id === rifaId);
-                if (rifaIndex !== -1) {
-                  const rifa = RIFAS[rifaIndex];
-                  const bolaIndex = rifa.bolas.findIndex(b => b.numero === (novaBola?.numero || bolaAntiga?.numero));
-                  
-                  if (eventType === 'UPDATE' && novaBola) {
-                    if (bolaIndex !== -1) {
-                      // Atualizar bola existente
-                      rifa.bolas[bolaIndex] = {
-                        numero: novaBola.numero,
-                        status: novaBola.status,
-                        clienteNome: novaBola.cliente_nome,
-                        clienteTel: novaBola.cliente_tel
-                      };
-                    }
-                  } else if (eventType === 'INSERT' && novaBola) {
-                    // Adicionar nova bola (quando aumenta quantidade)
-                    if (bolaIndex === -1) {
-                      rifa.bolas.push({
-                        numero: novaBola.numero,
-                        status: novaBola.status,
-                        clienteNome: novaBola.cliente_nome,
-                        clienteTel: novaBola.cliente_tel
-                      });
-                      // Ordenar bolas
-                      rifa.bolas.sort((a, b) => parseInt(a.numero) - parseInt(b.numero));
-                    }
-                  } else if (eventType === 'DELETE' && bolaAntiga) {
-                    // Remover bola (quando diminui quantidade)
-                    if (bolaIndex !== -1) {
-                      rifa.bolas.splice(bolaIndex, 1);
-                    }
-                  }
-                  
-                  // Salvar e re-renderizar
-                  salvarDadosLocal();
-                } else {
-                  // Se a rifa não foi encontrada localmente, recarregar tudo
-                  carregarRifasDoSupabase();
-                }
-              }
+              console.log('⚽ Bola alterada:', payload);
+              carregarRifasDoSupabase();
             }
           )
-          .subscribe();
+          .on('postgres_changes',
+            { event: '*', schema: 'public', table: 'rifas' },
+            (payload) => {
+              console.log('📢 Rifa alterada:', payload);
+              carregarRifasDoSupabase();
+            }
+          )
+          .subscribe((status) => {
+            console.log('📡 Status Realtime:', status);
+            if (status === 'SUBSCRIBED') {
+              console.log('✅ Conectado ao Realtime!');
+            } else if (status === 'CHANNEL_ERROR') {
+              console.log('❌ Erro na conexão Realtime');
+            }
+          });
       }
 
-      // ---------- FUNÇÕES AUXILIARES ----------
       function encontrarProximoIdDisponivel() {
         if (RIFAS.length === 0) return 1;
         const ids = RIFAS.map(r => r.id).sort((a,b)=>a-b);
@@ -981,7 +900,6 @@ header {
         return nums;
       }
 
-      // ---------- ALERTAS MODERNOS ----------
       function alertaModerno(titulo, icone, mensagem) {
         return new Promise((resolve) => {
           const overlay = document.createElement('div');
@@ -1035,10 +953,7 @@ header {
         });
       }
 
-      // ---------- FUNÇÕES DE NEGÓCIO ----------
-      
       async function verificarAdminSenha(senha) {
-        // Chamada RPC para verificar senha admin no servidor
         const { data, error } = await supabaseClient.rpc('check_admin_password', { senha_attempt: senha });
         if (error) {
           console.error('Erro ao verificar senha admin:', error);
@@ -1093,7 +1008,6 @@ header {
       }
 
       async function editarRifa(rifa) {
-        // Editar dados básicos
         const novoNome = await promptModerno('Editar nome do produto', 'Digite o novo nome', false);
         if (novoNome !== null && novoNome !== '') rifa.nomeProduto = novoNome;
         
@@ -1112,7 +1026,6 @@ header {
         const novaData = await promptModerno('Editar data do sorteio (AAAA-MM-DD)', 'Ex: 2025-12-31', false);
         if (novaData !== null && novaData !== '') rifa.dataSorteio = novaData;
         
-        // Editar imagem
         const trocarImagem = await promptModerno('Trocar imagem? (s/n)', 's ou n', false);
         let novaImagem = rifa.imagemData;
         if (trocarImagem && trocarImagem.toLowerCase() === 's') {
@@ -1133,29 +1046,29 @@ header {
           if (novaImg) novaImagem = novaImg;
         }
         
-        // Editar quantidade de bolas
         const opcoes = [10,20,30,40,50,100];
         const escolha = await promptModerno('Nova quantidade de bolas (10,20,30,40,50,100)', 'Ex: 50', false);
         let novaQtd = parseInt(escolha);
+        let bolasAlteradas = false;
+        
         if (!isNaN(novaQtd) && opcoes.includes(novaQtd)) {
           const qtdAtual = rifa.bolas.length;
           if (novaQtd !== qtdAtual) {
+            bolasAlteradas = true;
             if (novaQtd < qtdAtual) {
-              // Verificar se as bolas a serem removidas estão todas disponíveis
               const bolasParaManter = rifa.bolas.slice(0, novaQtd);
               const bolasRemovidas = rifa.bolas.slice(novaQtd);
               const temOcupadas = bolasRemovidas.some(b => b.status !== 'disponivel');
               if (temOcupadas) {
                 alertaModerno('Aviso', '⚠️', 'Não é possível reduzir a quantidade porque algumas bolas já foram compradas ou são vencedoras.');
+                bolasAlteradas = false;
               } else {
-                // Remover bolas do Supabase
                 for (const bola of bolasRemovidas) {
                   await supabaseClient.from('bolas').delete().eq('rifa_id', rifa.id).eq('numero', bola.numero);
                 }
                 rifa.bolas = bolasParaManter;
               }
             } else if (novaQtd > qtdAtual) {
-              // Adicionar novas bolas
               const novas = [];
               for (let i = qtdAtual; i < novaQtd; i++) {
                 const num = i.toString().padStart(2,'0');
@@ -1163,13 +1076,17 @@ header {
               }
               const bolasParaInserir = novas.map(b => ({ rifa_id: rifa.id, numero: b.numero, status: b.status, cliente_nome: b.clienteNome, cliente_tel: b.clienteTel }));
               const { error } = await supabaseClient.from('bolas').insert(bolasParaInserir);
-              if (!error) rifa.bolas.push(...novas);
-              else alertaModerno('Erro', '❌', 'Erro ao adicionar bolas.');
+              if (!error) {
+                rifa.bolas.push(...novas);
+                rifa.bolas.sort((a, b) => parseInt(a.numero) - parseInt(b.numero));
+              } else {
+                alertaModerno('Erro', '❌', 'Erro ao adicionar bolas.');
+                bolasAlteradas = false;
+              }
             }
           }
         }
         
-        // Atualizar rifa no banco
         try {
           const { error } = await supabaseClient
             .from('rifas')
@@ -1187,6 +1104,10 @@ header {
           rifa.imagemData = novaImagem;
           salvarDadosLocal();
           alertaModerno('Sucesso', '✅', 'Rifa atualizada com sucesso!');
+          
+          if (bolasAlteradas) {
+            await carregarRifasDoSupabase();
+          }
         } catch (error) {
           alertaModerno('Erro', '❌', 'Erro ao atualizar rifa no servidor.');
         }
@@ -1209,23 +1130,26 @@ header {
         document.body.appendChild(modal);
       }
 
-      function excluirCliente(rifaId, numeroBola) {
+      async function excluirCliente(rifaId, numeroBola) {
         const rifa = RIFAS.find(r => r.id === rifaId);
         if (!rifa) return false;
         const bola = rifa.bolas.find(b => b.numero === numeroBola);
         if (!bola || bola.status !== 'comprada') return false;
-        atualizarBolaNoSupabase(rifaId, numeroBola, { status: 'disponivel', clienteNome: null, clienteTel: null })
-          .then(() => {
-            bola.status = 'disponivel';
-            bola.clienteNome = null;
-            bola.clienteTel = null;
-            salvarDadosLocal();
-          })
-          .catch(() => alertaModerno('Erro', '❌', 'Erro ao liberar bola.'));
-        return true;
+        
+        try {
+          await atualizarBolaNoSupabase(rifaId, numeroBola, { status: 'disponivel', clienteNome: null, clienteTel: null });
+          bola.status = 'disponivel';
+          bola.clienteNome = null;
+          bola.clienteTel = null;
+          salvarDadosLocal();
+          return true;
+        } catch (error) {
+          alertaModerno('Erro', '❌', 'Erro ao liberar bola.');
+          return false;
+        }
       }
 
-      // ---------- COMPRAR BOLA ----------
+      // ==================== FUNÇÃO CORRIGIDA ====================
       async function comprarBola(rifaId, indexBola) {
         const rifa = RIFAS.find(r => r.id === rifaId);
         if (!rifa) return;
@@ -1243,17 +1167,22 @@ header {
             clienteNome: nome,
             clienteTel: telefone
           });
+          
+          // Atualização local imediata
           bola.status = 'comprada';
           bola.clienteNome = nome;
           bola.clienteTel = telefone;
           salvarDadosLocal();
+          
+          // Forçar recarregamento dos dados do servidor para garantir sincronia em tempo real
+          await carregarRifasDoSupabase();
+          
           alertaModerno('Bola reservada', '✅', `Bola ${bola.numero} reservada com sucesso!`);
         } catch (error) {
           alertaModerno('Erro', '❌', 'Erro ao reservar bola. Tente novamente.');
         }
       }
 
-      // ---------- FINALIZAR SORTEIO ----------
       async function finalizarSorteio(rifaId) {
         const rifa = RIFAS.find(r => r.id === rifaId);
         if (!rifa) return;
@@ -1271,7 +1200,6 @@ header {
         }
       }
 
-      // ---------- RENDERIZAR CARDS ----------
       function renderizarRifas() {
         const container = document.getElementById('rifasContainer');
         container.innerHTML = '';
@@ -1385,84 +1313,73 @@ header {
         });
       };
 
-      // ---------- MODAL CRIAÇÃO DE RIFA (com alerta de pagamento) ----------
-      
       async function abrirCriacaoRifaComAlerta() {
-  const chavePix = '56ec477a-9501-4c33-afd3-397d9268a152';
-  
-  return new Promise((resolve) => {
-    // Alerta principal (sem botão)
-    const overlay = document.createElement('div');
-    overlay.className = 'modal-overlay';
-    overlay.innerHTML = `
-      <div class="alerta-moderno" style="max-width: 500px;">
-        <div class="alerta-icon">💡</div>
-        <h3>📢 Atenção!</h3>
-        <p style="text-align: left;">
-          Para criar a sua Rifa, copie o código Pix abaixo, clique em "OK" Prossiga Com a criação da Rifa inserindo seu e-mail e criando uma senha. Lembre-se de pagar uma taxa de <strong>R$ 10,00</strong> ao ADM:<br><br>
-          <strong style="background: #1d4c2c; padding: 10px; border-radius: 10px; display: block; text-align: center; font-family: monospace; font-size: 14px; word-break: break-all;">
-            ${chavePix}
-          </strong><br>
-          <button id="copiarPixBtn" style="background: #ffaa33; border: none; padding: 8px 20px; border-radius: 30px; font-weight: bold; cursor: pointer; margin-top: 5px; width: 100%;">📋 Copiar PIX</button><br><br>
-          Após criar a Rifa e pagar o PIX, 
-          Envie o comprovante por e-mail clicando no ícone de <strong>📢</strong> na parte superior direita da página.<br><br>
-          ⚠️ Caso não seja identificado pagamento, a sua Rifa será banida.<br><br>
-          <strong>Boas Vendas!</strong>
-        </p>
-      </div>
-    `;
-    document.body.appendChild(overlay);
-    
-    // Função para copiar PIX
-    const copiarBtn = overlay.querySelector('#copiarPixBtn');
-    copiarBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      navigator.clipboard.writeText(chavePix).then(() => {
-        // Fechar o alerta principal
-        document.body.removeChild(overlay);
+        const chavePix = '56ec477a-9501-4c33-afd3-397d9268a152';
         
-        // Mostrar modal de sucesso
-        const sucessoOverlay = document.createElement('div');
-        sucessoOverlay.className = 'modal-overlay';
-        sucessoOverlay.innerHTML = `
-          <div class="alerta-moderno" style="max-width: 350px;">
-            <div class="alerta-icon">✅</div>
-            <h3>Sucesso!</h3>
-            <p>Chave PIX copiada com sucesso!</p>
-            <button id="btnContinuar" style="background: linear-gradient(45deg, #ff8c00, #ffaa33); border: none; padding: 12px 30px; border-radius: 50px; font-weight: bold; font-size: 16px; margin-top: 15px; cursor: pointer;">Continuar</button>
-          </div>
-        `;
-        document.body.appendChild(sucessoOverlay);
-        
-        // Fechar modal de sucesso e abrir criação da rifa
-        sucessoOverlay.querySelector('#btnContinuar').addEventListener('click', (e) => {
-          e.stopPropagation();
-          document.body.removeChild(sucessoOverlay);
-          abrirCriacaoRifaInterna();
-          resolve();
+        return new Promise((resolve) => {
+          const overlay = document.createElement('div');
+          overlay.className = 'modal-overlay';
+          overlay.innerHTML = `
+            <div class="alerta-moderno" style="max-width: 500px;">
+              <div class="alerta-icon">💡</div>
+              <h3>📢 Atenção!</h3>
+              <p style="text-align: left;">
+                Para criar a sua Rifa, copie o código Pix abaixo, clique em "OK" Prossiga Com a criação da Rifa inserindo seu e-mail e criando uma senha. Lembre-se de pagar uma taxa de <strong>R$ 10,00</strong> ao ADM:<br><br>
+                <strong style="background: #1d4c2c; padding: 10px; border-radius: 10px; display: block; text-align: center; font-family: monospace; font-size: 14px; word-break: break-all;">
+                  ${chavePix}
+                </strong><br>
+                <button id="copiarPixBtn" style="background: #ffaa33; border: none; padding: 8px 20px; border-radius: 30px; font-weight: bold; cursor: pointer; margin-top: 5px; width: 100%;">📋 Copiar PIX</button><br><br>
+                Após criar a Rifa e pagar o PIX, 
+                Envie o comprovante por e-mail clicando no ícone de <strong>📢</strong> na parte superior direita da página.<br><br>
+                ⚠️ Caso não seja identificado pagamento, a sua Rifa será banida.<br><br>
+                <strong>Boas Vendas!</strong>
+              </p>
+            </div>
+          `;
+          document.body.appendChild(overlay);
+          
+          const copiarBtn = overlay.querySelector('#copiarPixBtn');
+          copiarBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navigator.clipboard.writeText(chavePix).then(() => {
+              document.body.removeChild(overlay);
+              const sucessoOverlay = document.createElement('div');
+              sucessoOverlay.className = 'modal-overlay';
+              sucessoOverlay.innerHTML = `
+                <div class="alerta-moderno" style="max-width: 350px;">
+                  <div class="alerta-icon">✅</div>
+                  <h3>Sucesso!</h3>
+                  <p>Chave PIX copiada com sucesso!</p>
+                  <button id="btnContinuar" style="background: linear-gradient(45deg, #ff8c00, #ffaa33); border: none; padding: 12px 30px; border-radius: 50px; font-weight: bold; font-size: 16px; margin-top: 15px; cursor: pointer;">Continuar</button>
+                </div>
+              `;
+              document.body.appendChild(sucessoOverlay);
+              sucessoOverlay.querySelector('#btnContinuar').addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.body.removeChild(sucessoOverlay);
+                abrirCriacaoRifaInterna();
+                resolve();
+              });
+            }).catch(() => {
+              const erroOverlay = document.createElement('div');
+              erroOverlay.className = 'modal-overlay';
+              erroOverlay.innerHTML = `
+                <div class="alerta-moderno" style="max-width: 350px;">
+                  <div class="alerta-icon">❌</div>
+                  <h3>Erro!</h3>
+                  <p>Erro ao copiar chave PIX. Tente novamente.</p>
+                  <button id="btnTentarNovamente" style="background: linear-gradient(45deg, #ff8c00, #ffaa33); border: none; padding: 12px 30px; border-radius: 50px; font-weight: bold; font-size: 16px; margin-top: 15px; cursor: pointer;">Tentar Novamente</button>
+                </div>
+              `;
+              document.body.appendChild(erroOverlay);
+              erroOverlay.querySelector('#btnTentarNovamente').addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.body.removeChild(erroOverlay);
+              });
+            });
+          });
         });
-      }).catch(() => {
-        // Modal de erro
-        const erroOverlay = document.createElement('div');
-        erroOverlay.className = 'modal-overlay';
-        erroOverlay.innerHTML = `
-          <div class="alerta-moderno" style="max-width: 350px;">
-            <div class="alerta-icon">❌</div>
-            <h3>Erro!</h3>
-            <p>Erro ao copiar chave PIX. Tente novamente.</p>
-            <button id="btnTentarNovamente" style="background: linear-gradient(45deg, #ff8c00, #ffaa33); border: none; padding: 12px 30px; border-radius: 50px; font-weight: bold; font-size: 16px; margin-top: 15px; cursor: pointer;">Tentar Novamente</button>
-          </div>
-        `;
-        document.body.appendChild(erroOverlay);
-        
-        erroOverlay.querySelector('#btnTentarNovamente').addEventListener('click', (e) => {
-          e.stopPropagation();
-          document.body.removeChild(erroOverlay);
-        });
-      });
-    });
-  });
-}
+      }
 
       async function abrirCriacaoRifaInterna() {
         const email = await promptModerno('🔐 Autenticação (e-mail)', 'seu@email.com');
@@ -1609,7 +1526,7 @@ header {
         });
       }
 
-      // ---------- LINK MINHAS RIFAS ----------
+      // ---------- LINK MINHAS RIFAS (CORRIGIDO - NÃO FECHA AO LIBERAR BOLA) ----------
       document.getElementById('linkMinhasRifas').addEventListener('click', async () => {
         const idRifa = await promptModerno('Digite o ID da rifa (está no card)', 'ex: 01');
         if (!idRifa) return;
@@ -1626,6 +1543,137 @@ header {
           return;
         }
 
+        // Função para atualizar o conteúdo do modal
+        const atualizarConteudoModal = async () => {
+          const { data: rifaAtualizada, error } = await supabaseClient
+            .from('rifas')
+            .select('*')
+            .eq('id', rifa.id)
+            .single();
+          
+          if (!error && rifaAtualizada) {
+            const { data: bolasAtualizadas } = await supabaseClient
+              .from('bolas')
+              .select('*')
+              .eq('rifa_id', rifa.id)
+              .order('numero', { ascending: true });
+            
+            rifa.nomeProduto = rifaAtualizada.nome_produto;
+            rifa.sobreProduto = rifaAtualizada.sobre_produto;
+            rifa.valorPonto = rifaAtualizada.valor_ponto;
+            rifa.chavePix = rifaAtualizada.chave_pix;
+            rifa.telefoneCriador = rifaAtualizada.telefone_criador;
+            rifa.dataSorteio = rifaAtualizada.data_sorteio;
+            
+            if (bolasAtualizadas) {
+              rifa.bolas = bolasAtualizadas.map(bola => ({
+                numero: bola.numero,
+                status: bola.status,
+                clienteNome: bola.cliente_nome,
+                clienteTel: bola.cliente_tel
+              }));
+            }
+            
+            const conteudoDiv = modal.querySelector('#conteudoMinhasRifas');
+            if (conteudoDiv) {
+              conteudoDiv.innerHTML = '';
+              await carregarConteudoModal(conteudoDiv, rifa);
+            }
+          }
+        };
+        
+        const carregarConteudoModal = async (conteudo, rifaLocal) => {
+          const divRifa = document.createElement('div');
+          divRifa.style.background = '#1b4d2b';
+          divRifa.style.borderRadius = '20px';
+          divRifa.style.padding = '15px';
+          divRifa.style.marginBottom = '20px';
+          divRifa.innerHTML = `<h3 style="color:orange;">${escapeHTML(rifaLocal.nomeProduto)} (ID: ${formatarId(rifaLocal.id)}) 
+            <button class="btn-editar" onclick="editarRifa(${JSON.stringify(rifaLocal).replace(/"/g, '&quot;')})">✏️ Editar</button>
+          </h3>`;
+
+          const compradas = rifaLocal.bolas.filter(b => b.status !== 'disponivel');
+          if (compradas.length === 0) {
+            divRifa.innerHTML += '<p>Nenhuma bola comprada ainda.</p>';
+          } else {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'tabela-wrapper';
+            const tabela = document.createElement('table');
+            tabela.className = 'tabela-clientes';
+            tabela.innerHTML = '<tr><th>Nº</th><th>Cliente</th><th>Telefone</th><th>Status</th><th>Ação</th></tr>';
+            compradas.forEach(b => {
+              const row = tabela.insertRow();
+              row.insertCell().textContent = b.numero;
+              row.insertCell().textContent = b.clienteNome || '-';
+              const cellTel = row.insertCell();
+              if (b.status === 'ganhadora' && b.clienteTel) {
+                const telSpan = document.createElement('span');
+                telSpan.className = 'telefone-vencedor';
+                telSpan.textContent = b.clienteTel;
+                telSpan.onclick = () => abrirWhatsappVencedor(b.clienteTel);
+                cellTel.appendChild(telSpan);
+              } else {
+                cellTel.textContent = b.clienteTel || '-';
+              }
+              row.insertCell().textContent = b.status === 'ganhadora' ? '🏆 Vencedor' : 'Comprada';
+              const cellAcao = row.insertCell();
+              if (b.status === 'comprada') {
+                const btnExcluir = document.createElement('button');
+                btnExcluir.className = 'btn-excluir-cliente';
+                btnExcluir.textContent = '❌ Liberar';
+                btnExcluir.onclick = async () => {
+                  if (confirm(`Liberar bola ${b.numero}?`)) {
+                    await excluirCliente(rifaLocal.id, b.numero);
+                    await atualizarConteudoModal();
+                  }
+                };
+                cellAcao.appendChild(btnExcluir);
+              } else {
+                cellAcao.textContent = '-';
+              }
+            });
+            wrapper.appendChild(tabela);
+            divRifa.appendChild(wrapper);
+          }
+
+          const divVenc = document.createElement('div');
+          divVenc.className = 'vencedor-linha';
+          divVenc.innerHTML = `
+            <label>Definir bola vencedora:</label>
+            <div>
+              <input type="text" id="numVenc_${rifaLocal.id}" placeholder="00" size="3" maxlength="2">
+              <button id="btnVenc_${rifaLocal.id}">Salvar vencedor</button>
+            </div>
+          `;
+          divRifa.appendChild(divVenc);
+          conteudo.appendChild(divRifa);
+
+          document.getElementById('btnVenc_'+rifaLocal.id).addEventListener('click', async () => {
+            const input = document.getElementById('numVenc_'+rifaLocal.id);
+            const num = input.value.trim().padStart(2,'0');
+            const bola = rifaLocal.bolas.find(b => b.numero === num);
+            if (!bola) { 
+              alertaModerno('Erro', '❌', 'Número não existe'); 
+              return; 
+            }
+            if (bola.status === 'disponivel') {
+              alertaModerno('Aviso', '⚠️', 'Esta bola ainda não foi comprada!');
+              return;
+            }
+            try {
+              await atualizarBolaNoSupabase(rifaLocal.id, num, {
+                status: 'ganhadora',
+                clienteNome: bola.clienteNome,
+                clienteTel: bola.clienteTel
+              });
+              await atualizarConteudoModal();
+              alertaModerno('Vencedor definido', '🏆', `Bola ${num} agora é a vencedora!`);
+            } catch (error) {
+              alertaModerno('Erro', '❌', 'Erro ao definir vencedor.');
+            }
+          });
+        };
+
         const overlay = document.createElement('div');
         overlay.className = 'modal-overlay';
         const modal = document.createElement('div');
@@ -1636,110 +1684,14 @@ header {
         document.body.appendChild(overlay);
 
         const conteudo = modal.querySelector('#conteudoMinhasRifas');
-        
-        const divRifa = document.createElement('div');
-        divRifa.style.background = '#1b4d2b';
-        divRifa.style.borderRadius = '20px';
-        divRifa.style.padding = '15px';
-        divRifa.style.marginBottom = '20px';
-        divRifa.innerHTML = `<h3 style="color:orange;">${escapeHTML(rifa.nomeProduto)} (ID: ${formatarId(rifa.id)}) 
-          <button class="btn-editar" onclick="editarRifa(${JSON.stringify(rifa).replace(/"/g, '&quot;')})">✏️ Editar</button>
-        </h3>`;
-
-        const compradas = rifa.bolas.filter(b => b.status !== 'disponivel');
-        if (compradas.length === 0) {
-          divRifa.innerHTML += '<p>Nenhuma bola comprada ainda.</p>';
-        } else {
-          const wrapper = document.createElement('div');
-          wrapper.className = 'tabela-wrapper';
-          const tabela = document.createElement('table');
-          tabela.className = 'tabela-clientes';
-          tabela.innerHTML = '青少年<th>Nº</th><th>Cliente</th><th>Telefone</th><th>Status</th><th>Ação</th>39';
-          compradas.forEach(b => {
-            const row = tabela.insertRow();
-            row.insertCell().textContent = b.numero;
-            row.insertCell().textContent = b.clienteNome || '-';
-            const cellTel = row.insertCell();
-            if (b.status === 'ganhadora' && b.clienteTel) {
-              const telSpan = document.createElement('span');
-              telSpan.className = 'telefone-vencedor';
-              telSpan.textContent = b.clienteTel;
-              telSpan.onclick = () => abrirWhatsappVencedor(b.clienteTel);
-              cellTel.appendChild(telSpan);
-            } else {
-              cellTel.textContent = b.clienteTel || '-';
-            }
-            row.insertCell().textContent = b.status === 'ganhadora' ? '🏆 Vencedor' : 'Comprada';
-            const cellAcao = row.insertCell();
-            if (b.status === 'comprada') {
-              const btnExcluir = document.createElement('button');
-              btnExcluir.className = 'btn-excluir-cliente';
-              btnExcluir.textContent = '❌ Liberar';
-              btnExcluir.onclick = () => {
-                if (confirm(`Liberar bola ${b.numero}?`)) {
-                  excluirCliente(rifa.id, b.numero);
-                  document.body.removeChild(overlay);
-                  renderizarRifas();
-                }
-              };
-              cellAcao.appendChild(btnExcluir);
-            } else {
-              cellAcao.textContent = '-';
-            }
-          });
-          wrapper.appendChild(tabela);
-          divRifa.appendChild(wrapper);
-        }
-
-        const divVenc = document.createElement('div');
-        divVenc.className = 'vencedor-linha';
-        divVenc.innerHTML = `
-          <label>Definir bola vencedora:</label>
-          <div>
-            <input type="text" id="numVenc_${rifa.id}" placeholder="00" size="3" maxlength="2">
-            <button id="btnVenc_${rifa.id}">Salvar vencedor</button>
-          </div>
-        `;
-        divRifa.appendChild(divVenc);
-        conteudo.appendChild(divRifa);
-
-        document.getElementById('btnVenc_'+rifa.id).addEventListener('click', async () => {
-          const input = document.getElementById('numVenc_'+rifa.id);
-          const num = input.value.trim().padStart(2,'0');
-          const bola = rifa.bolas.find(b => b.numero === num);
-          if (!bola) { 
-            alertaModerno('Erro', '❌', 'Número não existe'); 
-            return; 
-          }
-          if (bola.status === 'disponivel') {
-            alertaModerno('Aviso', '⚠️', 'Esta bola ainda não foi comprada!');
-            return;
-          }
-          try {
-            await atualizarBolaNoSupabase(rifa.id, num, {
-              status: 'ganhadora',
-              clienteNome: bola.clienteNome,
-              clienteTel: bola.clienteTel
-            });
-            rifa.bolas.forEach(b => { if (b.status === 'ganhadora') b.status = 'comprada'; });
-            bola.status = 'ganhadora';
-            salvarDadosLocal();
-            document.body.removeChild(overlay);
-            renderizarRifas();
-            alertaModerno('Vencedor definido', '🏆', `Bola ${num} agora é a vencedora!`);
-          } catch (error) {
-            alertaModerno('Erro', '❌', 'Erro ao definir vencedor.');
-          }
-        });
+        await carregarConteudoModal(conteudo, rifa);
 
         modal.querySelector('#fecharMinhasRifas').addEventListener('click', () => document.body.removeChild(overlay));
       });
 
-      // Expor funções globais
       window.editarRifa = editarRifa;
       window.acessarAdmin = acessarAdmin;
 
-      // ---------- TERMO DE USO ----------
       function mostrarTermoUso() {
         const overlay = document.createElement('div');
         overlay.className = 'modal-overlay';
@@ -1765,16 +1717,13 @@ header {
         });
       }
 
-      // ---------- INICIALIZAÇÃO ----------
       const termoAceito = localStorage.getItem('termo_aceito');
       if (!termoAceito) setTimeout(mostrarTermoUso, 500);
 
-      // Redirecionar clique do link "Criar Rifa" para mostrar alerta primeiro
       document.getElementById('criarRifaLink').addEventListener('click', () => {
         abrirCriacaoRifaComAlerta();
       });
 
-      // PWA
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('service-worker.js').catch(e => console.log('SW falhou:', e));
@@ -1785,7 +1734,6 @@ header {
       window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; installBtn.style.display = 'block'; });
       installBtn.addEventListener('click', async () => { if (deferredPrompt) { deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; installBtn.style.display = 'none'; } });
 
-      // Iniciar
       carregarRifasDoSupabase();
     })();
   </script>
