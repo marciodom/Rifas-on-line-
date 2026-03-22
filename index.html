@@ -1584,7 +1584,7 @@
             wrapper.className = 'tabela-wrapper';
             const tabela = document.createElement('table');
             tabela.className = 'tabela-clientes';
-            tabela.innerHTML = '<th>Nº</th><th>Cliente</th><th>Telefone</th><th>Status</th><th>Ação</th>';
+            tabela.innerHTML = '<thead><tr><th>Nº</th><th>Cliente</th><th>Telefone</th><th>Status</th><th>Ação</th></tr></thead><tbody></tbody>';
             compradas.forEach(b => {
               const row = tabela.insertRow();
               row.insertCell().textContent = b.numero;
