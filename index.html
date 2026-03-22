@@ -691,6 +691,7 @@
       
       let subscription = null;
       let RIFAS = [];
+      let reconnectTimeout = null;
 
       function salvarDadosLocal() {
         try {
@@ -706,7 +707,6 @@
         renderizarRifas();
       }
 
-      // FUNÇÃO CORRIGIDA: IDs livres (reutilização de IDs menores)
       function encontrarProximoIdDisponivel() {
         if (RIFAS.length === 0) return 1;
         const idsExistentes = RIFAS.map(r => r.id).sort((a, b) => a - b);
@@ -777,46 +777,47 @@
         }
       }
 
-   async function salvarRifaNoSupabase(rifa) {
-  // Usa o ID que você calculou (encontrarProximoIdDisponivel)
-  const { data: rifaData, error: rifaError } = await supabaseClient
-    .from('rifas')
-    .insert({
-      id: rifa.id,  // <-- USAR O ID CALCULADO
-      nome_produto: rifa.nomeProduto,
-      sobre_produto: rifa.sobreProduto,
-      imagem_data: rifa.imagemData,
-      valor_ponto: rifa.valorPonto,
-      senha: rifa.senha,
-      senha_pessoal: rifa.senhaPessoal,
-      telefone_criador: rifa.telefoneCriador,
-      chave_pix: rifa.chavePix,
-      data_sorteio: rifa.dataSorteio,
-      criador_email: rifa.criadorEmail
-    })
-    .select()
-    .single();
-  
-  if (rifaError) throw rifaError;
-  
-  const bolasParaInserir = rifa.bolas.map(bola => ({
-    rifa_id: rifaData.id,
-    numero: bola.numero,
-    status: bola.status,
-    cliente_nome: bola.clienteNome,
-    cliente_tel: bola.clienteTel
-  }));
-  
-  const { error: bolasError } = await supabaseClient
-    .from('bolas')
-    .insert(bolasParaInserir);
-  
-  if (bolasError) throw bolasError;
-  
-  return rifaData.id;
-}
+      async function salvarRifaNoSupabase(rifa) {
+        const { data: rifaData, error: rifaError } = await supabaseClient
+          .from('rifas')
+          .insert({
+            id: rifa.id,
+            nome_produto: rifa.nomeProduto,
+            sobre_produto: rifa.sobreProduto,
+            imagem_data: rifa.imagemData,
+            valor_ponto: rifa.valorPonto,
+            senha: rifa.senha,
+            senha_pessoal: rifa.senhaPessoal,
+            telefone_criador: rifa.telefoneCriador,
+            chave_pix: rifa.chavePix,
+            data_sorteio: rifa.dataSorteio,
+            criador_email: rifa.criadorEmail
+          })
+          .select()
+          .single();
+        
+        if (rifaError) throw rifaError;
+        
+        const bolasParaInserir = rifa.bolas.map(bola => ({
+          rifa_id: rifaData.id,
+          numero: bola.numero,
+          status: bola.status,
+          cliente_nome: bola.clienteNome,
+          cliente_tel: bola.clienteTel
+        }));
+        
+        const { error: bolasError } = await supabaseClient
+          .from('bolas')
+          .insert(bolasParaInserir);
+        
+        if (bolasError) throw bolasError;
+        
+        return rifaData.id;
+      }
 
       async function atualizarBolaNoSupabase(rifaId, numeroBola, dadosBola) {
+        console.log('🔄 Enviando atualização:', { rifaId, numeroBola, dadosBola });
+        
         const { error } = await supabaseClient
           .from('bolas')
           .update({
@@ -828,7 +829,12 @@
           .eq('rifa_id', rifaId)
           .eq('numero', numeroBola);
         
-        if (error) throw error;
+        if (error) {
+          console.error('❌ Erro no Supabase:', error);
+          throw error;
+        }
+        
+        console.log('✅ Bola atualizada no servidor');
       }
 
       async function removerRifaDoSupabase(rifaId) {
@@ -839,25 +845,39 @@
         if (error) throw error;
       }
 
-      // ==================== FUNÇÃO CORRIGIDA COM LOGS ====================
+      // ==================== FUNÇÃO CORRIGIDA COM RECONEXÃO AUTOMÁTICA ====================
       function iniciarEscutaRealtime() {
-        if (subscription) subscription.unsubscribe();
+        if (subscription) {
+          subscription.unsubscribe();
+          subscription = null;
+        }
+        if (reconnectTimeout) {
+          clearTimeout(reconnectTimeout);
+          reconnectTimeout = null;
+        }
         
         console.log('🔄 Iniciando escuta Realtime...');
         
         subscription = supabaseClient
           .channel('rifas-channel')
           .on('postgres_changes', 
-            { event: '*', schema: 'public', table: 'bolas' },
+            { event: 'UPDATE', schema: 'public', table: 'bolas' },
             (payload) => {
-              console.log('⚽ Bola alterada em tempo real:', payload);
+              console.log('⚽ BOLA atualizada em tempo real:', payload);
               carregarRifasDoSupabase();
             }
           )
           .on('postgres_changes',
-            { event: '*', schema: 'public', table: 'rifas' },
+            { event: 'INSERT', schema: 'public', table: 'bolas' },
             (payload) => {
-              console.log('📢 Rifa alterada em tempo real:', payload);
+              console.log('⚽ NOVA BOLA adicionada:', payload);
+              carregarRifasDoSupabase();
+            }
+          )
+          .on('postgres_changes',
+            { event: 'UPDATE', schema: 'public', table: 'rifas' },
+            (payload) => {
+              console.log('📢 RIFA atualizada em tempo real:', payload);
               carregarRifasDoSupabase();
             }
           )
@@ -866,7 +886,13 @@
             if (status === 'SUBSCRIBED') {
               console.log('✅ Conectado ao Realtime!');
             } else if (status === 'CHANNEL_ERROR') {
-              console.log('❌ Erro na conexão Realtime');
+              console.log('❌ Erro na conexão Realtime - tentando reconectar em 3s...');
+              // Tentar reconectar após 3 segundos
+              if (reconnectTimeout) clearTimeout(reconnectTimeout);
+              reconnectTimeout = setTimeout(() => {
+                console.log('🔄 Tentando reconectar ao Realtime...');
+                iniciarEscutaRealtime();
+              }, 3000);
             }
           });
       }
@@ -1146,7 +1172,6 @@
         }
       }
 
-      // FUNÇÃO CORRIGIDA: Adicionado carregarRifasDoSupabase para sincronizar tempo real
       async function comprarBola(rifaId, indexBola) {
         const rifa = RIFAS.find(r => r.id === rifaId);
         if (!rifa) return;
@@ -1165,13 +1190,11 @@
             clienteTel: telefone
           });
           
-          // Atualização local imediata
           bola.status = 'comprada';
           bola.clienteNome = nome;
           bola.clienteTel = telefone;
           salvarDadosLocal();
           
-          // Forçar recarregamento para sincronizar em tempo real
           await carregarRifasDoSupabase();
           
           alertaModerno('Bola reservada', '✅', `Bola ${bola.numero} reservada com sucesso!`);
@@ -1523,7 +1546,6 @@
         });
       }
 
-      // LINK MINHAS RIFAS (modal não fecha ao liberar bola)
       document.getElementById('linkMinhasRifas').addEventListener('click', async () => {
         const idRifa = await promptModerno('Digite o ID da rifa (está no card)', 'ex: 01');
         if (!idRifa) return;
@@ -1720,14 +1742,13 @@
         abrirCriacaoRifaComAlerta();
       });
 
-      // ==================== SERVICE WORKER CORRIGIDO ====================
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./service-worker.js')
-            .then(reg => console.log('✅ Service Worker registrado:', reg))
-            .catch(e => console.log('❌ SW falhou:', e));
-        });
-      }
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('✅ Service Worker registrado:', reg))
+      .catch(e => console.log('❌ SW falhou:', e));
+  });
+}
       
       let deferredPrompt;
       const installBtn = document.getElementById('installButton');
