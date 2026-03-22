@@ -706,6 +706,18 @@
         renderizarRifas();
       }
 
+      // FUNÇÃO CORRIGIDA: IDs livres (reutilização de IDs menores)
+      function encontrarProximoIdDisponivel() {
+        if (RIFAS.length === 0) return 1;
+        const idsExistentes = RIFAS.map(r => r.id).sort((a, b) => a - b);
+        let idEsperado = 1;
+        for (let id of idsExistentes) {
+          if (id > idEsperado) return idEsperado;
+          idEsperado = id + 1;
+        }
+        return idEsperado;
+      }
+
       async function carregarRifasDoSupabase() {
         try {
           const { data: rifasData, error: rifasError } = await supabaseClient
@@ -765,46 +777,46 @@
         }
       }
 
-      async function salvarRifaNoSupabase(rifa) {
-        const { data: rifaData, error: rifaError } = await supabaseClient
-          .from('rifas')
-          .insert({
-            nome_produto: rifa.nomeProduto,
-            sobre_produto: rifa.sobreProduto,
-            imagem_data: rifa.imagemData,
-            valor_ponto: rifa.valorPonto,
-            senha: rifa.senha,
-            senha_pessoal: rifa.senhaPessoal,
-            telefone_criador: rifa.telefoneCriador,
-            chave_pix: rifa.chavePix,
-            data_sorteio: rifa.dataSorteio,
-            criador_email: rifa.criadorEmail
-          })
-          .select()
-          .single();
-        
-        if (rifaError) throw rifaError;
-        
-        const bolasParaInserir = rifa.bolas.map(bola => ({
-          rifa_id: rifaData.id,
-          numero: bola.numero,
-          status: bola.status,
-          cliente_nome: bola.clienteNome,
-          cliente_tel: bola.clienteTel
-        }));
-        
-        const { error: bolasError } = await supabaseClient
-          .from('bolas')
-          .insert(bolasParaInserir);
-        
-        if (bolasError) throw bolasError;
-        
-        return rifaData.id;
-      }
+   async function salvarRifaNoSupabase(rifa) {
+  // Usa o ID que você calculou (encontrarProximoIdDisponivel)
+  const { data: rifaData, error: rifaError } = await supabaseClient
+    .from('rifas')
+    .insert({
+      id: rifa.id,  // <-- USAR O ID CALCULADO
+      nome_produto: rifa.nomeProduto,
+      sobre_produto: rifa.sobreProduto,
+      imagem_data: rifa.imagemData,
+      valor_ponto: rifa.valorPonto,
+      senha: rifa.senha,
+      senha_pessoal: rifa.senhaPessoal,
+      telefone_criador: rifa.telefoneCriador,
+      chave_pix: rifa.chavePix,
+      data_sorteio: rifa.dataSorteio,
+      criador_email: rifa.criadorEmail
+    })
+    .select()
+    .single();
+  
+  if (rifaError) throw rifaError;
+  
+  const bolasParaInserir = rifa.bolas.map(bola => ({
+    rifa_id: rifaData.id,
+    numero: bola.numero,
+    status: bola.status,
+    cliente_nome: bola.clienteNome,
+    cliente_tel: bola.clienteTel
+  }));
+  
+  const { error: bolasError } = await supabaseClient
+    .from('bolas')
+    .insert(bolasParaInserir);
+  
+  if (bolasError) throw bolasError;
+  
+  return rifaData.id;
+}
 
       async function atualizarBolaNoSupabase(rifaId, numeroBola, dadosBola) {
-        console.log('🔄 Enviando atualização:', { rifaId, numeroBola, dadosBola });
-        
         const { error } = await supabaseClient
           .from('bolas')
           .update({
@@ -816,12 +828,7 @@
           .eq('rifa_id', rifaId)
           .eq('numero', numeroBola);
         
-        if (error) {
-          console.error('❌ Erro no Supabase:', error);
-          throw error;
-        }
-        
-        console.log('✅ Bola atualizada no servidor');
+        if (error) throw error;
       }
 
       async function removerRifaDoSupabase(rifaId) {
@@ -832,6 +839,7 @@
         if (error) throw error;
       }
 
+      // ==================== FUNÇÃO CORRIGIDA COM LOGS ====================
       function iniciarEscutaRealtime() {
         if (subscription) subscription.unsubscribe();
         
@@ -842,14 +850,14 @@
           .on('postgres_changes', 
             { event: '*', schema: 'public', table: 'bolas' },
             (payload) => {
-              console.log('⚽ Bola alterada:', payload);
+              console.log('⚽ Bola alterada em tempo real:', payload);
               carregarRifasDoSupabase();
             }
           )
           .on('postgres_changes',
             { event: '*', schema: 'public', table: 'rifas' },
             (payload) => {
-              console.log('📢 Rifa alterada:', payload);
+              console.log('📢 Rifa alterada em tempo real:', payload);
               carregarRifasDoSupabase();
             }
           )
@@ -861,17 +869,6 @@
               console.log('❌ Erro na conexão Realtime');
             }
           });
-      }
-
-      function encontrarProximoIdDisponivel() {
-        if (RIFAS.length === 0) return 1;
-        const ids = RIFAS.map(r => r.id).sort((a,b)=>a-b);
-        let esperado = 1;
-        for (let id of ids) {
-          if (id > esperado) return esperado;
-          esperado = id + 1;
-        }
-        return esperado;
       }
 
       function formatarId(id) { return id.toString().padStart(2, '0'); }
@@ -1149,7 +1146,7 @@
         }
       }
 
-      // ==================== FUNÇÃO CORRIGIDA ====================
+      // FUNÇÃO CORRIGIDA: Adicionado carregarRifasDoSupabase para sincronizar tempo real
       async function comprarBola(rifaId, indexBola) {
         const rifa = RIFAS.find(r => r.id === rifaId);
         if (!rifa) return;
@@ -1174,7 +1171,7 @@
           bola.clienteTel = telefone;
           salvarDadosLocal();
           
-          // Forçar recarregamento dos dados do servidor para garantir sincronia em tempo real
+          // Forçar recarregamento para sincronizar em tempo real
           await carregarRifasDoSupabase();
           
           alertaModerno('Bola reservada', '✅', `Bola ${bola.numero} reservada com sucesso!`);
@@ -1526,7 +1523,7 @@
         });
       }
 
-      // ---------- LINK MINHAS RIFAS (CORRIGIDO - NÃO FECHA AO LIBERAR BOLA) ----------
+      // LINK MINHAS RIFAS (modal não fecha ao liberar bola)
       document.getElementById('linkMinhasRifas').addEventListener('click', async () => {
         const idRifa = await promptModerno('Digite o ID da rifa (está no card)', 'ex: 01');
         if (!idRifa) return;
@@ -1543,7 +1540,6 @@
           return;
         }
 
-        // Função para atualizar o conteúdo do modal
         const atualizarConteudoModal = async () => {
           const { data: rifaAtualizada, error } = await supabaseClient
             .from('rifas')
@@ -1600,7 +1596,7 @@
             wrapper.className = 'tabela-wrapper';
             const tabela = document.createElement('table');
             tabela.className = 'tabela-clientes';
-            tabela.innerHTML = '<tr><th>Nº</th><th>Cliente</th><th>Telefone</th><th>Status</th><th>Ação</th></tr>';
+            tabela.innerHTML = '青少年<th>Nº</th><th>Cliente</th><th>Telefone</th><th>Status</th><th>Ação</th>59';
             compradas.forEach(b => {
               const row = tabela.insertRow();
               row.insertCell().textContent = b.numero;
@@ -1724,11 +1720,15 @@
         abrirCriacaoRifaComAlerta();
       });
 
+      // ==================== SERVICE WORKER CORRIGIDO ====================
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('service-worker.js').catch(e => console.log('SW falhou:', e));
+          navigator.serviceWorker.register('./service-worker.js')
+            .then(reg => console.log('✅ Service Worker registrado:', reg))
+            .catch(e => console.log('❌ SW falhou:', e));
         });
       }
+      
       let deferredPrompt;
       const installBtn = document.getElementById('installButton');
       window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; installBtn.style.display = 'block'; });
