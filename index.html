@@ -689,9 +689,8 @@
       const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqa2VpdXRibWV5bnNvcnl4aHhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMjI0MjgsImV4cCI6MjA4OTU5ODQyOH0.4BezPn_tqPdgdL9jQyrNK0Y8Ii9MP0m8Jteq7O63MDI';
       const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       
-      let subscription = null;
+      let pollingInterval = null;
       let RIFAS = [];
-      let reconnectTimeout = null;
 
       function salvarDadosLocal() {
         try {
@@ -760,7 +759,6 @@
           
           RIFAS = rifasCompletas;
           salvarDadosLocal();
-          iniciarEscutaRealtime();
         } catch (error) {
           console.error('Erro ao carregar rifas do Supabase:', error);
           const saved = localStorage.getItem('rifas_onlines');
@@ -774,6 +772,26 @@
             } catch(e) {}
           }
           alertaModerno('Erro', '❌', 'Erro ao conectar com o servidor. Usando dados locais.');
+        }
+      }
+
+      // ==================== POLLING (verificação periódica) ====================
+      function iniciarPolling() {
+        if (pollingInterval) clearInterval(pollingInterval);
+        
+        console.log('🔄 Iniciando polling (verificação a cada 3 segundos)...');
+        
+        pollingInterval = setInterval(() => {
+          console.log('🔄 Verificando atualizações...');
+          carregarRifasDoSupabase();
+        }, 3000);
+      }
+
+      function pararPolling() {
+        if (pollingInterval) {
+          clearInterval(pollingInterval);
+          pollingInterval = null;
+          console.log('⏹️ Polling parado');
         }
       }
 
@@ -843,58 +861,6 @@
           .delete()
           .eq('id', rifaId);
         if (error) throw error;
-      }
-
-      // ==================== FUNÇÃO CORRIGIDA COM RECONEXÃO AUTOMÁTICA ====================
-      function iniciarEscutaRealtime() {
-        if (subscription) {
-          subscription.unsubscribe();
-          subscription = null;
-        }
-        if (reconnectTimeout) {
-          clearTimeout(reconnectTimeout);
-          reconnectTimeout = null;
-        }
-        
-        console.log('🔄 Iniciando escuta Realtime...');
-        
-        subscription = supabaseClient
-          .channel('rifas-channel')
-          .on('postgres_changes', 
-            { event: 'UPDATE', schema: 'public', table: 'bolas' },
-            (payload) => {
-              console.log('⚽ BOLA atualizada em tempo real:', payload);
-              carregarRifasDoSupabase();
-            }
-          )
-          .on('postgres_changes',
-            { event: 'INSERT', schema: 'public', table: 'bolas' },
-            (payload) => {
-              console.log('⚽ NOVA BOLA adicionada:', payload);
-              carregarRifasDoSupabase();
-            }
-          )
-          .on('postgres_changes',
-            { event: 'UPDATE', schema: 'public', table: 'rifas' },
-            (payload) => {
-              console.log('📢 RIFA atualizada em tempo real:', payload);
-              carregarRifasDoSupabase();
-            }
-          )
-          .subscribe((status) => {
-            console.log('📡 Status Realtime:', status);
-            if (status === 'SUBSCRIBED') {
-              console.log('✅ Conectado ao Realtime!');
-            } else if (status === 'CHANNEL_ERROR') {
-              console.log('❌ Erro na conexão Realtime - tentando reconectar em 3s...');
-              // Tentar reconectar após 3 segundos
-              if (reconnectTimeout) clearTimeout(reconnectTimeout);
-              reconnectTimeout = setTimeout(() => {
-                console.log('🔄 Tentando reconectar ao Realtime...');
-                iniciarEscutaRealtime();
-              }, 3000);
-            }
-          });
       }
 
       function formatarId(id) { return id.toString().padStart(2, '0'); }
@@ -1743,18 +1709,20 @@
       });
 
       if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('✅ Service Worker registrado:', reg))
-      .catch(e => console.log('❌ SW falhou:', e));
-  });
-}
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('✅ Service Worker registrado:', reg))
+            .catch(e => console.log('❌ SW falhou:', e));
+        });
+      }
       
       let deferredPrompt;
       const installBtn = document.getElementById('installButton');
       window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; installBtn.style.display = 'block'; });
       installBtn.addEventListener('click', async () => { if (deferredPrompt) { deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; installBtn.style.display = 'none'; } });
 
+      // Iniciar polling (verificação a cada 3 segundos) em vez de Realtime
+      iniciarPolling();
       carregarRifasDoSupabase();
     })();
   </script>
