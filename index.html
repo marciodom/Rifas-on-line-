@@ -1003,7 +1003,7 @@
         const novoSobre = await promptModerno('Editar descrição do produto', 'Digite a nova descrição', false);
         if (novoSobre !== null && novoSobre !== '') rifa.sobreProduto = novoSobre;
         
-        const novoValor = await promptModerno('Editar valor do ponto (R$)', 'Ex: 10.00', false);
+        const novoValor = await promptModerno('Editar valor do ponto (R$)', 'Ex: 10,00', false);
         if (novoValor !== null && novoValor !== '') rifa.valorPonto = novoValor;
         
         const novaChavePix = await promptModerno('Editar chave PIX', 'Digite a chave PIX', false);
@@ -1584,7 +1584,7 @@
             wrapper.className = 'tabela-wrapper';
             const tabela = document.createElement('table');
             tabela.className = 'tabela-clientes';
-            tabela.innerHTML = '青少年<th>Nº</th><th>Cliente</th><th>Telefone</th><th>Status</th><th>Ação</th>59';
+            tabela.innerHTML = '<th>Nº</th><th>Cliente</th><th>Telefone</th><th>Status</th><th>Ação</th>';
             compradas.forEach(b => {
               const row = tabela.insertRow();
               row.insertCell().textContent = b.numero;
