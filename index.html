@@ -718,62 +718,80 @@
       }
 
       async function carregarRifasDoSupabase() {
-        try {
-          const { data: rifasData, error: rifasError } = await supabaseClient
-            .from('rifas')
-            .select('*')
-            .order('id', { ascending: true });
-          
-          if (rifasError) throw rifasError;
-          
-          const rifasCompletas = [];
-          for (const rifa of rifasData) {
-            const { data: bolasData, error: bolasError } = await supabaseClient
-              .from('bolas')
-              .select('*')
-              .eq('rifa_id', rifa.id)
-              .order('numero', { ascending: true });
-            
-            if (bolasError) throw bolasError;
-            
-            rifasCompletas.push({
-              id: rifa.id,
-              nomeProduto: rifa.nome_produto,
-              sobreProduto: rifa.sobre_produto,
-              imagemData: rifa.imagem_data,
-              valorPonto: rifa.valor_ponto,
-              senha: rifa.senha,
-              senhaPessoal: rifa.senha_pessoal,
-              telefoneCriador: rifa.telefone_criador,
-              chavePix: rifa.chave_pix,
-              dataSorteio: rifa.data_sorteio,
-              criadorEmail: rifa.criador_email,
-              bolas: bolasData.map(bola => ({
-                numero: bola.numero,
-                status: bola.status,
-                clienteNome: bola.cliente_nome,
-                clienteTel: bola.cliente_tel
-              }))
-            });
-          }
-          
-          RIFAS = rifasCompletas;
-          salvarDadosLocal();
-        } catch (error) {
-          console.error('Erro ao carregar rifas do Supabase:', error);
-          const saved = localStorage.getItem('rifas_onlines');
-          if (saved) {
-            try {
-              const parsed = JSON.parse(saved);
-              if (Array.isArray(parsed)) {
-                RIFAS = parsed;
-                renderizarRifas();
-              }
-            } catch(e) {}
-          }
-          alertaModerno('Erro', '❌', 'Erro ao conectar com o servidor. Usando dados locais.');
+  // Salvar posições de scroll de todos os cards
+  const scrollPositions = [];
+  const cards = document.querySelectorAll('.bolas-grid');
+  cards.forEach((card, index) => {
+    scrollPositions[index] = card.scrollTop;
+  });
+  
+  try {
+    const { data: rifasData, error: rifasError } = await supabaseClient
+      .from('rifas')
+      .select('*')
+      .order('id', { ascending: true });
+    
+    if (rifasError) throw rifasError;
+    
+    const rifasCompletas = [];
+    for (const rifa of rifasData) {
+      const { data: bolasData, error: bolasError } = await supabaseClient
+        .from('bolas')
+        .select('*')
+        .eq('rifa_id', rifa.id)
+        .order('numero', { ascending: true });
+      
+      if (bolasError) throw bolasError;
+      
+      rifasCompletas.push({
+        id: rifa.id,
+        nomeProduto: rifa.nome_produto,
+        sobreProduto: rifa.sobre_produto,
+        imagemData: rifa.imagem_data,
+        valorPonto: rifa.valor_ponto,
+        senha: rifa.senha,
+        senhaPessoal: rifa.senha_pessoal,
+        telefoneCriador: rifa.telefone_criador,
+        chavePix: rifa.chave_pix,
+        dataSorteio: rifa.data_sorteio,
+        criadorEmail: rifa.criador_email,
+        bolas: bolasData.map(bola => ({
+          numero: bola.numero,
+          status: bola.status,
+          clienteNome: bola.cliente_nome,
+          clienteTel: bola.cliente_tel
+        }))
+      });
+    }
+    
+    RIFAS = rifasCompletas;
+    salvarDadosLocal();
+    
+    // Restaurar posições de scroll após a renderização
+    setTimeout(() => {
+      const newCards = document.querySelectorAll('.bolas-grid');
+      newCards.forEach((card, index) => {
+        if (scrollPositions[index] !== undefined) {
+          card.scrollTop = scrollPositions[index];
         }
-      }
+      });
+    }, 50);
+    
+  } catch (error) {
+    console.error('Erro ao carregar rifas do Supabase:', error);
+    const saved = localStorage.getItem('rifas_onlines');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          RIFAS = parsed;
+          renderizarRifas();
+        }
+      } catch(e) {}
+    }
+    alertaModerno('Erro', '❌', 'Erro ao conectar com o servidor. Usando dados locais.');
+  }
+}
 
       // ==================== POLLING (verificação periódica) ====================
       function iniciarPolling() {
@@ -782,9 +800,9 @@
         console.log('🔄 Iniciando polling (verificação a cada 3 segundos)...');
         
         pollingInterval = setInterval(() => {
-          console.log('🔄 Verificando atualizações...');
-          carregarRifasDoSupabase();
-        }, 3000);
+  console.log('🔄 Verificando atualizações...');
+  carregarRifasDoSupabase();
+}, 5000); // 5 segundos em vez de 3
       }
 
       function pararPolling() {
