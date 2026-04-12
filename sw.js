@@ -1,5 +1,5 @@
 // service-worker.js
-const CACHE_NAME = 'rifas-online-v2';
+const CACHE_NAME = 'rifas-online-v3';
 const urlsToCache = [
   'https://marciodom.github.io/Rifas-on-line-/',
   'https://marciodom.github.io/Rifas-on-line-/manifest.json',
