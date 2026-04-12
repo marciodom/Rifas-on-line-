@@ -603,7 +603,7 @@
       background: #0d391f;
       color: #ffd966;
     }
-    .telefone-vencedor {
+    .telefone-link {
       color: #4ec0e9;
       cursor: pointer;
       text-decoration: underline;
@@ -624,22 +624,20 @@
       color: #0a2b1a;
       border: none;
       border-radius: 30px;
-      padding: 4px 12px;
-      font-size: 12px;
+      padding: 8px 20px;
+      font-size: 14px;
       font-weight: bold;
       cursor: pointer;
-      margin-left: 10px;
     }
     .btn-mensagem {
       background: #25d366;
       color: white;
       border: none;
       border-radius: 30px;
-      padding: 4px 12px;
-      font-size: 12px;
+      padding: 8px 20px;
+      font-size: 14px;
       font-weight: bold;
       cursor: pointer;
-      margin-left: 10px;
     }
     .btn-confirmar-pagamento {
       background: #4CAF50;
@@ -723,34 +721,27 @@
       // Função melhorada para formatar telefone para WhatsApp
       function formatarTelefoneParaWhatsApp(tel) {
         if (!tel) return '';
-        // Remove todos os caracteres não numéricos
         let numeros = tel.replace(/\D/g, '');
         
-        // Se o número já estiver no formato internacional (começando com 55 e tiver 12-13 dígitos)
         if (numeros.startsWith('55') && numeros.length >= 12 && numeros.length <= 13) {
           return numeros;
         }
         
-        // Se for um número brasileiro com DDD (10-11 dígitos)
         if (numeros.length === 10 || numeros.length === 11) {
-          // Adiciona 9 se for necessário (quando tem 10 dígitos)
           if (numeros.length === 10) {
             numeros = numeros.slice(0, 2) + '9' + numeros.slice(2);
           }
-          // Adiciona código do Brasil
           return '55' + numeros;
         }
         
-        // Se já tiver 12-13 dígitos mas sem 55
         if (numeros.length >= 12 && numeros.length <= 13 && !numeros.startsWith('55')) {
           return '55' + numeros;
         }
         
-        // Caso contrário, retorna o número limpo
         return numeros;
       }
 
-      // Função para formatar exibição do telefone (mantém formato original para visualização)
+      // Função para formatar exibição do telefone
       function formatarTelefoneExibicao(tel) {
         if (!tel) return '';
         let numeros = tel.replace(/\D/g, '');
@@ -759,24 +750,6 @@
         }
         if (numeros.length === 11 && !numeros.startsWith('55')) {
           numeros = '55' + numeros;
-        }
-        return numeros;
-      }
-
-      function validarFormatarTelefone(tel) {
-        if (!tel) return tel;
-        let numeros = tel.replace(/\D/g, '');
-        if (numeros.length === 10) {
-          numeros = numeros.slice(0, 2) + '9' + numeros.slice(2);
-        }
-        if (numeros.length === 11 && !numeros.startsWith('55')) {
-          numeros = '55' + numeros;
-        }
-        if (numeros.length === 13 && numeros.startsWith('55')) {
-          return numeros;
-        }
-        if (numeros.length === 11) {
-          return '55' + numeros;
         }
         return numeros;
       }
@@ -866,7 +839,6 @@
       }
 
       async function carregarRifasDoSupabase() {
-        // Salvar posições de scroll de todos os cards
         const scrollPositions = [];
         const cards = document.querySelectorAll('.bolas-grid');
         cards.forEach((card, index) => {
@@ -915,7 +887,6 @@
           RIFAS = rifasCompletas;
           salvarDadosLocal();
           
-          // Restaurar posições de scroll após a renderização
           setTimeout(() => {
             const newCards = document.querySelectorAll('.bolas-grid');
             newCards.forEach((card, index) => {
@@ -941,67 +912,53 @@
         }
       }
 
-      // ==================== REALTIME (SUBSTITUI O POLLING) ====================
       function iniciarRealtime() {
         if (subscription) subscription.unsubscribe();
-        
-        console.log('🔄 Iniciando escuta Realtime...');
         
         subscription = supabaseClient
           .channel('rifas-channel')
           .on('postgres_changes', 
             { event: 'INSERT', schema: 'public', table: 'rifas' },
             (payload) => {
-              console.log('📢 Nova rifa adicionada:', payload);
+              console.log('📢 Nova rifa adicionada');
               carregarRifasDoSupabase();
             }
           )
           .on('postgres_changes',
             { event: 'UPDATE', schema: 'public', table: 'rifas' },
             (payload) => {
-              console.log('📢 Rifa atualizada:', payload);
+              console.log('📢 Rifa atualizada');
               carregarRifasDoSupabase();
             }
           )
           .on('postgres_changes',
             { event: 'DELETE', schema: 'public', table: 'rifas' },
             (payload) => {
-              console.log('📢 Rifa removida:', payload);
+              console.log('📢 Rifa removida');
               carregarRifasDoSupabase();
             }
           )
           .on('postgres_changes',
             { event: 'INSERT', schema: 'public', table: 'bolas' },
             (payload) => {
-              console.log('⚽ Nova bola adicionada:', payload);
+              console.log('⚽ Nova bola adicionada');
               carregarRifasDoSupabase();
             }
           )
           .on('postgres_changes',
             { event: 'UPDATE', schema: 'public', table: 'bolas' },
             (payload) => {
-              console.log('⚽ Bola atualizada em tempo real:', payload);
+              console.log('⚽ Bola atualizada em tempo real');
               carregarRifasDoSupabase();
             }
           )
           .subscribe((status) => {
-            console.log('📡 Status Realtime:', status);
             if (status === 'SUBSCRIBED') {
               console.log('✅ Conectado ao Realtime!');
             } else if (status === 'CHANNEL_ERROR') {
-              console.log('❌ Erro na conexão Realtime');
-              // Fallback: tentar reconectar após 5 segundos
               setTimeout(() => iniciarRealtime(), 5000);
             }
           });
-      }
-
-      function pararRealtime() {
-        if (subscription) {
-          subscription.unsubscribe();
-          subscription = null;
-          console.log('⏹️ Realtime parado');
-        }
       }
 
       async function salvarRifaNoSupabase(rifa) {
@@ -1073,7 +1030,6 @@
       }
       function formatarValorBR(valor) {
         if (!valor) return '';
-        // Garante que o valor tenha duas casas decimais
         let valorFormatado = parseFloat(valor).toFixed(2);
         return valorFormatado.replace('.', ',');
       }
@@ -1265,47 +1221,6 @@
           if (novaImg) novaImagem = novaImg;
         }
         
-        const opcoes = [10,20,30,40,50,100];
-        const escolha = await promptModerno('Nova quantidade de bolas (10,20,30,40,50,100)', 'Ex: 50', false);
-        let novaQtd = parseInt(escolha);
-        let bolasAlteradas = false;
-        
-        if (!isNaN(novaQtd) && opcoes.includes(novaQtd)) {
-          const qtdAtual = rifa.bolas.length;
-          if (novaQtd !== qtdAtual) {
-            bolasAlteradas = true;
-            if (novaQtd < qtdAtual) {
-              const bolasParaManter = rifa.bolas.slice(0, novaQtd);
-              const bolasRemovidas = rifa.bolas.slice(novaQtd);
-              const temOcupadas = bolasRemovidas.some(b => b.status !== 'disponivel');
-              if (temOcupadas) {
-                alertaModerno('Aviso', '⚠️', 'Não é possível reduzir a quantidade porque algumas bolas já foram compradas ou são vencedoras.');
-                bolasAlteradas = false;
-              } else {
-                for (const bola of bolasRemovidas) {
-                  await supabaseClient.from('bolas').delete().eq('rifa_id', rifa.id).eq('numero', bola.numero);
-                }
-                rifa.bolas = bolasParaManter;
-              }
-            } else if (novaQtd > qtdAtual) {
-              const novas = [];
-              for (let i = qtdAtual; i < novaQtd; i++) {
-                const num = i.toString().padStart(2,'0');
-                novas.push({ numero: num, status: 'disponivel', clienteNome: null, clienteTel: null });
-              }
-              const bolasParaInserir = novas.map(b => ({ rifa_id: rifa.id, numero: b.numero, status: b.status, cliente_nome: b.clienteNome, cliente_tel: b.clienteTel }));
-              const { error } = await supabaseClient.from('bolas').insert(bolasParaInserir);
-              if (!error) {
-                rifa.bolas.push(...novas);
-                rifa.bolas.sort((a, b) => parseInt(a.numero) - parseInt(b.numero));
-              } else {
-                alertaModerno('Erro', '❌', 'Erro ao adicionar bolas.');
-                bolasAlteradas = false;
-              }
-            }
-          }
-        }
-        
         try {
           const { error } = await supabaseClient
             .from('rifas')
@@ -1323,16 +1238,13 @@
           rifa.imagemData = novaImagem;
           salvarDadosLocal();
           alertaModerno('Sucesso', '✅', 'Rifa atualizada com sucesso!');
-          
-          if (bolasAlteradas) {
-            await carregarRifasDoSupabase();
-          }
+          await carregarRifasDoSupabase();
         } catch (error) {
           alertaModerno('Erro', '❌', 'Erro ao atualizar rifa no servidor.');
         }
       }
 
-      function abrirWhatsappVencedor(telefone) {
+      function abrirWhatsapp(telefone) {
         if (!telefone) return;
         let tel = formatarTelefoneParaWhatsApp(telefone);
         window.open(`https://wa.me/${tel}`, '_blank');
@@ -1374,7 +1286,6 @@
         const bola = rifa.bolas.find(b => b.numero === numeroBola);
         if (!bola || bola.status !== 'comprada') return false;
         
-        // Apenas muda a aparência do botão, sem alterar o status da bola
         if (btnElement) {
           btnElement.textContent = 'Confirmado ✓';
           btnElement.classList.add('confirmado');
@@ -1383,9 +1294,6 @@
           btnElement.style.cursor = 'default';
           btnElement.style.opacity = '0.9';
         }
-        
-        // A bola permanece com status 'comprada' e cor amarela
-        // Não alteramos o status da bola no banco de dados
         
         return true;
       }
@@ -1493,10 +1401,9 @@
           bolasWrap.className = 'bolas-grid';
           rifa.bolas.forEach((bola, idx) => {
             const bolaEl = document.createElement('div');
-            // Garantir que bolas compradas e pagas fiquem amarelas
             let bolaClass = bola.status;
             if (bola.status === 'pago') {
-              bolaClass = 'comprada'; // Usa a mesma classe CSS para cor amarela
+              bolaClass = 'comprada';
             }
             bolaEl.className = `bola ${bolaClass}`;
             bolaEl.textContent = bola.numero;
@@ -1508,9 +1415,7 @@
               if (bola.status === 'disponivel') {
                 comprarBola(rifa.id, idx);
               } else {
-                let statusMsg = bola.status === 'comprada' ? 'comprada (aguardando confirmação)' : 
-                               bola.status === 'pago' ? 'paga' : 'ganhadora';
-                alertaModerno('Bola ocupada', '⚠️', `Bola ${bola.numero} já está ${statusMsg}.`);
+                alertaModerno('Bola ocupada', '⚠️', 'Esta bola já está ocupada. Escolha outra.');
               }
             };
             bolasWrap.appendChild(bolaEl);
@@ -1532,8 +1437,7 @@
           btnWhats.onclick = (e) => {
             e.stopPropagation();
             if (rifa.telefoneCriador) {
-              let telefone = formatarTelefoneParaWhatsApp(rifa.telefoneCriador);
-              window.open(`https://wa.me/${telefone}`, '_blank');
+              abrirWhatsapp(rifa.telefoneCriador);
             } else {
               alertaModerno('Aviso', '📱', 'Criador não cadastrou número para contato.');
             }
@@ -1557,9 +1461,6 @@
       };
 
       async function abrirCriacaoRifaComAlerta() {
-        // A chave Pix foi removida do frontend por segurança
-        // O usuário deve fornecer sua própria chave Pix no formulário de criação
-        
         return new Promise((resolve) => {
           const overlay = document.createElement('div');
           overlay.className = 'modal-overlay';
@@ -1806,46 +1707,49 @@
           divRifa.style.padding = '15px';
           divRifa.style.marginBottom = '20px';
           
-          // Criar container para o título com botões
-          const tituloContainer = document.createElement('div');
-          tituloContainer.style.display = 'flex';
-          tituloContainer.style.alignItems = 'center';
-          tituloContainer.style.justifyContent = 'space-between';
-          tituloContainer.style.marginBottom = '15px';
+          // Container principal para organizar os elementos
+          const containerPrincipal = document.createElement('div');
+          containerPrincipal.style.display = 'flex';
+          containerPrincipal.style.flexDirection = 'column';
           
+          // Título centralizado acima
           const tituloH3 = document.createElement('h3');
           tituloH3.style.color = 'orange';
-          tituloH3.style.margin = '0';
+          tituloH3.style.margin = '0 0 15px 0';
+          tituloH3.style.textAlign = 'center';
+          tituloH3.style.fontSize = '20px';
           tituloH3.textContent = `${escapeHTML(rifaLocal.nomeProduto)} (ID: ${formatarId(rifaLocal.id)})`;
           
+          containerPrincipal.appendChild(tituloH3);
+          
+          // Container para os botões centralizados abaixo do título
           const botoesContainer = document.createElement('div');
           botoesContainer.style.display = 'flex';
-          botoesContainer.style.gap = '10px';
+          botoesContainer.style.justifyContent = 'center';
+          botoesContainer.style.gap = '15px';
+          botoesContainer.style.marginBottom = '20px';
           
           const btnEditar = document.createElement('button');
           btnEditar.className = 'btn-editar';
           btnEditar.textContent = '✏️ Editar';
-          btnEditar.style.marginLeft = '0';
           btnEditar.onclick = () => editarRifa(rifaLocal);
           
           const btnMensagem = document.createElement('button');
           btnMensagem.className = 'btn-mensagem';
           btnMensagem.textContent = '💬 Mensagem';
-          btnMensagem.style.marginLeft = '0';
           btnMensagem.onclick = () => abrirModalMensagem(rifaLocal);
           
           botoesContainer.appendChild(btnEditar);
           botoesContainer.appendChild(btnMensagem);
           
-          tituloContainer.appendChild(tituloH3);
-          tituloContainer.appendChild(botoesContainer);
-          
-          divRifa.appendChild(tituloContainer);
+          containerPrincipal.appendChild(botoesContainer);
+          divRifa.appendChild(containerPrincipal);
 
           const compradas = rifaLocal.bolas.filter(b => b.status !== 'disponivel');
           if (compradas.length === 0) {
             const semCompras = document.createElement('p');
             semCompras.textContent = 'Nenhuma bola comprada ainda.';
+            semCompras.style.textAlign = 'center';
             divRifa.appendChild(semCompras);
           } else {
             const wrapper = document.createElement('div');
@@ -1869,13 +1773,9 @@
               const cellTel = document.createElement('td');
               if (b.clienteTel) {
                 const telLink = document.createElement('span');
-                telLink.className = 'telefone-vencedor';
+                telLink.className = 'telefone-link';
                 telLink.textContent = b.clienteTel;
-                telLink.style.cursor = 'pointer';
-                telLink.onclick = () => {
-                  const telFormatado = formatarTelefoneParaWhatsApp(b.clienteTel);
-                  window.open(`https://wa.me/${telFormatado}`, '_blank');
-                };
+                telLink.onclick = () => abrirWhatsapp(b.clienteTel);
                 cellTel.appendChild(telLink);
               } else {
                 cellTel.textContent = '-';
@@ -1889,8 +1789,6 @@
               row.appendChild(cellStatus);
               
               const cellAcao = document.createElement('td');
-              
-              // Container para os botões
               const btnContainer = document.createElement('div');
               btnContainer.style.display = 'flex';
               btnContainer.style.gap = '5px';
@@ -2056,7 +1954,7 @@
       window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; installBtn.style.display = 'block'; });
       installBtn.addEventListener('click', async () => { if (deferredPrompt) { deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; installBtn.style.display = 'none'; } });
 
-      // Iniciar Realtime (em vez de polling)
+      // Iniciar Realtime
       iniciarRealtime();
       carregarRifasDoSupabase();
     })();
