@@ -476,6 +476,19 @@
       color: white !important;
       box-shadow: 0 4px 0 #1b5e20 !important;
     }
+    .btn-desbloquear {
+      background: #dc3545 !important;
+      color: white !important;
+      box-shadow: 0 4px 0 #a71d2a !important;
+      border: 1px solid #ff6b6b !important;
+      padding: 8px 16px !important;
+      font-size: 13px !important;
+    }
+    .btn-desbloquear:hover {
+      background: #c82333 !important;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 #a71d2a !important;
+    }
     .file-upload {
       background: #1d4c2c;
       padding: 25px;
@@ -1280,22 +1293,79 @@
         }
       }
 
+      async function desbloquearTodasBolas(rifaId) {
+        const rifa = RIFAS.find(r => r.id === rifaId);
+        if (!rifa) return false;
+        
+        const bolasOcupadas = rifa.bolas.filter(b => b.status !== 'disponivel');
+        if (bolasOcupadas.length === 0) {
+          alertaModerno('Aviso', '⚠️', 'Todas as bolas já estão livres.');
+          return false;
+        }
+        
+        try {
+          for (const bola of bolasOcupadas) {
+            await atualizarBolaNoSupabase(rifaId, bola.numero, { 
+              status: 'disponivel', 
+              clienteNome: null, 
+              clienteTel: null 
+            });
+            bola.status = 'disponivel';
+            bola.clienteNome = null;
+            bola.clienteTel = null;
+          }
+          
+          salvarDadosLocal();
+          alertaModerno('Sucesso', '✅', `${bolasOcupadas.length} bola(s) foram desbloqueadas!`);
+          return true;
+        } catch (error) {
+          alertaModerno('Erro', '❌', 'Erro ao desbloquear bolas.');
+          return false;
+        }
+      }
+
       async function confirmarPagamento(rifaId, numeroBola, btnElement) {
         const rifa = RIFAS.find(r => r.id === rifaId);
         if (!rifa) return false;
         const bola = rifa.bolas.find(b => b.numero === numeroBola);
         if (!bola || bola.status !== 'comprada') return false;
         
-        if (btnElement) {
-          btnElement.textContent = 'Confirmado ✓';
-          btnElement.classList.add('confirmado');
-          btnElement.disabled = true;
-          btnElement.style.background = '#2e7d32';
-          btnElement.style.cursor = 'default';
-          btnElement.style.opacity = '0.9';
+        try {
+          // Atualiza o status da bola para "pago" no banco de dados
+          await atualizarBolaNoSupabase(rifaId, numeroBola, {
+            status: 'pago',
+            clienteNome: bola.clienteNome,
+            clienteTel: bola.clienteTel
+          });
+          
+          // Atualiza o objeto local
+          bola.status = 'pago';
+          
+          // Atualiza a aparência do botão
+          if (btnElement) {
+            btnElement.textContent = 'Confirmado ✓';
+            btnElement.classList.add('confirmado');
+            btnElement.disabled = true;
+            btnElement.style.background = '#2e7d32';
+            btnElement.style.cursor = 'default';
+            btnElement.style.opacity = '0.9';
+          }
+          
+          // Atualiza a tabela de status
+          const row = btnElement.closest('tr');
+          if (row) {
+            const statusCell = row.querySelector('td:nth-child(4)');
+            if (statusCell) {
+              statusCell.textContent = '✅ Pago';
+            }
+          }
+          
+          salvarDadosLocal();
+          return true;
+        } catch (error) {
+          alertaModerno('Erro', '❌', 'Erro ao confirmar pagamento.');
+          return false;
         }
-        
-        return true;
       }
 
       async function comprarBola(rifaId, indexBola) {
@@ -1722,12 +1792,12 @@
           
           containerPrincipal.appendChild(tituloH3);
           
-          // Container para os botões centralizados abaixo do título
-          const botoesContainer = document.createElement('div');
-          botoesContainer.style.display = 'flex';
-          botoesContainer.style.justifyContent = 'center';
-          botoesContainer.style.gap = '15px';
-          botoesContainer.style.marginBottom = '20px';
+          // Container para os botões - primeira linha (Editar e Mensagem)
+          const botoesContainer1 = document.createElement('div');
+          botoesContainer1.style.display = 'flex';
+          botoesContainer1.style.justifyContent = 'center';
+          botoesContainer1.style.gap = '15px';
+          botoesContainer1.style.marginBottom = '10px';
           
           const btnEditar = document.createElement('button');
           btnEditar.className = 'btn-editar';
@@ -1739,10 +1809,30 @@
           btnMensagem.textContent = '💬 Mensagem';
           btnMensagem.onclick = () => abrirModalMensagem(rifaLocal);
           
-          botoesContainer.appendChild(btnEditar);
-          botoesContainer.appendChild(btnMensagem);
+          botoesContainer1.appendChild(btnEditar);
+          botoesContainer1.appendChild(btnMensagem);
           
-          containerPrincipal.appendChild(botoesContainer);
+          containerPrincipal.appendChild(botoesContainer1);
+          
+          // Container para os botões - segunda linha (Desbloquear Todas)
+          const botoesContainer2 = document.createElement('div');
+          botoesContainer2.style.display = 'flex';
+          botoesContainer2.style.justifyContent = 'center';
+          botoesContainer2.style.marginBottom = '20px';
+          
+          const btnDesbloquear = document.createElement('button');
+          btnDesbloquear.className = 'btn-desbloquear';
+          btnDesbloquear.textContent = '🔓 Desbloquear Todas as Bolas';
+          btnDesbloquear.onclick = async () => {
+            if (confirm('Tem certeza que deseja desbloquear TODAS as bolas? Esta ação irá liberar todas as bolas compradas e pagas.')) {
+              await desbloquearTodasBolas(rifaLocal.id);
+              await atualizarConteudoModal();
+            }
+          };
+          
+          botoesContainer2.appendChild(btnDesbloquear);
+          containerPrincipal.appendChild(botoesContainer2);
+          
           divRifa.appendChild(containerPrincipal);
 
           const compradas = rifaLocal.bolas.filter(b => b.status !== 'disponivel');
@@ -1799,6 +1889,7 @@
                 btnConfirmar.textContent = 'Confirmar';
                 btnConfirmar.onclick = async (e) => {
                   await confirmarPagamento(rifaLocal.id, b.numero, btnConfirmar);
+                  // Não precisa recarregar todo o modal, apenas atualiza o status na linha
                 };
                 btnContainer.appendChild(btnConfirmar);
                 
